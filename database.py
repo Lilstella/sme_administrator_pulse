@@ -1,5 +1,5 @@
 import sqlite3 as sql
-import config
+import configs
 
 class Client:
     def __init__(self, id, name, last_name, gender, age):
@@ -11,7 +11,7 @@ class Client:
 
 class Clients:
     #Generate/connect database
-    connector = sql.connect(config.DATABASE_PATH)
+    connector = sql.connect(configs.DATABASE_PATH)
     cursor = connector.cursor()
     cursor.execute("CREATE TABLE IF NOT EXISTS clients" \
                    "(id VARCHAR PRIMARY KEY, name VARCHAR, last_name VARCHAR, gender VARCHAR, age INTEGER)")
@@ -29,7 +29,7 @@ class Clients:
 
     @staticmethod
     def add(id, name, last_name, gender, age):
-        connector = sql.connect(config.DATABASE_PATH)
+        connector = sql.connect(configs.DATABASE_PATH)
         cursor = connector.cursor() 
 
         client = Client(id, name, last_name, gender, age)
@@ -41,7 +41,7 @@ class Clients:
     
     @staticmethod
     def modificate(id, name, last_name, gender, age):
-        connector = sql.connect(config.DATABASE_PATH)
+        connector = sql.connect(configs.DATABASE_PATH)
         cursor = connector.cursor() 
 
         for i, client in enumerate(Clients.list_clients):
@@ -57,7 +57,7 @@ class Clients:
             
     @staticmethod          
     def remove(id):
-        connector = sql.connect(config.DATABASE_PATH)
+        connector = sql.connect(configs.DATABASE_PATH)
         cursor = connector.cursor()
 
         for index, client in enumerate(Clients.list_clients):
@@ -70,7 +70,7 @@ class Clients:
 
     @staticmethod
     def add_many(clients):
-        connector = sql.connect(config.DATABASE_PATH)
+        connector = sql.connect(configs.DATABASE_PATH)
         cursor = connector.cursor()
 
         for any in clients:
@@ -83,7 +83,7 @@ class Clients:
 
     @staticmethod
     def remove_all(): 
-        connector = sql.connect(config.DATABASE_PATH)
+        connector = sql.connect(configs.DATABASE_PATH)
         cursor = connector.cursor() 
 
         cursor.execute("DELETE FROM clients;")
