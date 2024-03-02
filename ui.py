@@ -16,7 +16,67 @@ class CenterWidget:
         self.geometry('{}x{}+{}+{}'.format(w, h, x, y))
 
 class CreateManyClientsWindow(Toplevel, CenterWidget):
-    pass
+      def __init__(self, parent):
+        super().__init__(parent)
+        self.title('Add Client')
+        self.build()
+        self.center()
+        self.resizable(False, False)
+        self.transient(parent)
+        self.grab_set()
+
+      def build(self):
+        top_frame = Frame(self)
+        top_frame.pack(padx = 20, pady = 10)
+
+        Label(top_frame, text = 'ID').grid(row = 0, column = 0)
+        Label(top_frame, text = 'Name').grid(row = 0, column = 1)
+        Label(top_frame, text = 'Surname').grid(row = 0, column = 2)
+        Label(top_frame, text = 'Gender').grid(row = 0, column = 3)
+        Label(top_frame, text = 'Age').grid(row = 0, column = 4)
+
+        id = Entry(top_frame)
+        id.grid(row = 1, column = 0)
+        id.bind("<KeyRelease>", lambda event: self.validate(event, 0))
+
+        name = Entry(top_frame)
+        name.grid(row = 1, column = 1)
+        name.bind("<KeyRelease>", lambda event: self.validate(event, 1))
+
+        last_name = Entry(top_frame)
+        last_name.grid(row = 1, column = 2)
+        last_name.bind("<KeyRelease>", lambda event: self.validate(event, 2))
+
+        gender = Entry(top_frame)
+        gender.grid(row = 1, column = 3)
+        gender.bind("<KeyRelease>", lambda event: self.validate(event, 3))
+
+        age = Entry(top_frame)
+        age.grid(row = 1, column = 4)
+        age.bind("<KeyRelease>", lambda event: self.validate(event, 4))
+
+        bottom_frame = Frame(self)
+        bottom_frame.pack(pady = 10)
+
+        create_bottom = Button(bottom_frame, text='Add', command = self.create_clients)
+        create_bottom.configure(state = DISABLED)
+        create_bottom.grid(row = 0, column = 0)
+        Button(bottom_frame, text='Cancel', command = self.close).grid(row = 0, column = 1)
+
+        self.validates = [0, 0, 0, 0, 0]
+        self.create_bottom = create_bottom
+        self.id = id
+        self.name = name
+        self.last_name = last_name
+        self.gender = gender
+        self.age = age
+
+      def close(self):
+        self.destroy()
+        self.update()
+
+      def ceate_clients(self):
+        pass
 
 class CreateClientWindow(Toplevel, CenterWidget):
     def __init__(self, parent):
