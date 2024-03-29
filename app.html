@@ -1,5 +1,3 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -7,7 +5,7 @@
         <meta name="viewport" content="width=device-width">
         <title>Admistrate of **</title>
 
-        <link rel="stylesheet" type="text/css" href="{% static 'css/app.css' %}">
+        <link rel="stylesheet" type="text/css" href="app.css">
     </head>
 
     <body>
@@ -38,15 +36,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for client in clients %}
-                            <tr>
-                                <td>{{ client.id }}</td>
-                                <td>{{ client.name }}</td>
-                                <td>{{ client.surname }}</td>
-                                <td>{{ client.age }}</td>
-                                <td>{{ client.gender }}</td>
-                            </tr>
-                            {% endfor %}
+                           <tr>
+                            <th>puto</th>
+                           </tr>
                         </tbody>
                     </table>
                 </div>
