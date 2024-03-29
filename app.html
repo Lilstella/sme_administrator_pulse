@@ -1,0 +1,61 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <title>Admistrate of **</title>
+
+        <link rel="stylesheet" type="text/css" href="{% static 'css/app.css' %}">
+    </head>
+
+    <body>
+        <header>
+            <h1>Welcome <strong>**!</strong></h1>
+            <p>Here you can manage **, lets grow your SME!</p>
+
+            <nav>
+                <a href="#graphics">Graphics</a>
+                <a href="#clients">Clients</a>
+                <a href="#services">**</a>
+                <a href="#contact">Contact me</a>
+            </nav>
+        </header>
+        
+        <main>
+            <section>
+                <h2 id="clients">Clients</h2>
+                <div class="scrollable-table">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>Last Name</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for client in clients %}
+                            <tr>
+                                <td>{{ client.id }}</td>
+                                <td>{{ client.name }}</td>
+                                <td>{{ client.surname }}</td>
+                                <td>{{ client.age }}</td>
+                                <td>{{ client.gender }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <footer>
+                For any problem with the app no doubt to contact me
+                <a href="mailto:luisstella.m@gmail.com">Mail</a>
+            </footer>
+        </main>
+    </body>
+</html>
