@@ -45,6 +45,8 @@ class Clients:
            
         connector.commit()
         connector.close()
+
+        return client
     
     @staticmethod
     def modificate_client(id, name, surname, gender, age):
@@ -58,10 +60,10 @@ class Clients:
                 Clients.list_clients[i].gender = gender
                 Clients.list_clients[i].age = age 
                 cursor.execute("UPDATE clients SET name = ?, surname = ?, gender = ?, age = ? WHERE id = ?", (client.name, client.surname, client.gender, client.age, client.id))
-
+                return Clients.list_clients[i]
+            
         connector.commit()
         connector.close()
-            
     @staticmethod          
     def remove_client(id):
         connector = sql.connect(configs.DATABASE_PATH)
@@ -71,6 +73,7 @@ class Clients:
             if client.id == id:
                 Clients.list_clients.pop(index)
                 cursor.execute("DELETE FROM clients WHERE id = ?", (id,))
+                return client
 
         connector.commit()
         connector.close()
@@ -131,7 +134,7 @@ class Sales:
     def search_sale(id):
         for sale in Sales.list_sales:
             if sale.id == id:
-                    return sale
+                return sale
             
     @staticmethod
     def add_sale(id, client_id, date, cash, transaction_state, service_state):
@@ -144,6 +147,8 @@ class Sales:
         connector.commit()
         connector.close()
 
+        return sale
+
     @staticmethod
     def modificate_sale(id, transaction_state, service_state):
         connector = sql.connect(configs.DATABASE_PATH)
@@ -154,10 +159,10 @@ class Sales:
                 Clients.list_sales[i].transaction_state = transaction_state
                 Clients.list_sales[i].service_state = service_state
                 cursor.execute("UPDATE sales SET transaction_state = ?, service_state = ? WHERE id = ?", (sale.transaction_state, sale.service_state, sale.id))
-        
+                return sale
+            
         connector.commit()
         connector.close()
-
     @staticmethod
     def remove_sale(id):
         connector = sql.connect(configs.DATABASE_PATH)
@@ -167,6 +172,7 @@ class Sales:
             if sale.id == id:
                 Sales.list_sales.pop(i)
                 cursor.execute("DELETE FROM sales WHERE id = ?", (id,))
+                return sale
 
         connector.commit()
         connector.close()

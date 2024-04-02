@@ -2,14 +2,14 @@ import sys
 import re
 from datetime import datetime
 
-DATABASE_PATH = "clients.db"
+DATABASE_PATH = "data.db"
 
 if "pytest" in sys.argv[0]:
-    DATABASE_PATH = "Test/clientes_test.db"
+    DATABASE_PATH = "Test/data_test.db"
 
 
 def valid_id(id, list):
-    if not re.match('[0-9]{2}[A-Z]$', id):
+    if not re.match('[A-Z0-9]{3}-[A-Z0-9]$', id):
         return False
     for client in list:
         if client.id == id:
