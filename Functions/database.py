@@ -1,6 +1,4 @@
 import sqlite3 as sql
-import configs
-from datetime import datetime
 
 class Client:
     def __init__(self, id, name, surname, gender, age):
@@ -14,13 +12,13 @@ class Client:
         return '{} : {} {}'.format(self.id, self.name, self.surname)
         
 class Clients:
-    connector = sql.connect(configs.DATABASE_PATH)
+    list_clients = []
+
+    connector = sql.connect('data.db')
     cursor = connector.cursor()
     cursor.execute("CREATE TABLE IF NOT EXISTS clients" \
                    "(id VARCHAR PRIMARY KEY, name VARCHAR, surname VARCHAR, gender VARCHAR, age INTEGER)")
     
-    list_clients = []
-
     content = cursor.execute('SELECT * FROM clients').fetchall()
     for id, name, surname, gender, age in content:
         client = Client(id, name, surname, gender, age)
@@ -36,7 +34,7 @@ class Clients:
 
     @staticmethod
     def add_client(id, name, surname, gender, age):
-        connector = sql.connect(configs.DATABASE_PATH)
+        connector = sql.connect('data.db')
         cursor = connector.cursor() 
 
         client = Client(id, name, surname, gender, age)
@@ -50,7 +48,7 @@ class Clients:
     
     @staticmethod
     def modificate_client(id, name, surname, gender, age):
-        connector = sql.connect(configs.DATABASE_PATH)
+        connector = sql.connect('data.db')
         cursor = connector.cursor() 
 
         for i, client in enumerate(Clients.list_clients):
@@ -66,7 +64,7 @@ class Clients:
         connector.close()
     @staticmethod          
     def remove_client(id):
-        connector = sql.connect(configs.DATABASE_PATH)
+        connector = sql.connect('data.db')
         cursor = connector.cursor()
 
         for index, client in enumerate(Clients.list_clients):
@@ -80,7 +78,7 @@ class Clients:
 
     @staticmethod
     def add_many_clients(list_new_clients):
-        connector = sql.connect(configs.DATABASE_PATH)
+        connector = sql.connect('data.db')
         cursor = connector.cursor()
 
         for any in list_new_clients:
@@ -93,10 +91,11 @@ class Clients:
 
     @staticmethod
     def remove_all_clients(): 
-        connector = sql.connect(configs.DATABASE_PATH)
+        connector = sql.connect('data.db')
         cursor = connector.cursor() 
 
         cursor.execute("DELETE FROM clients;")
+        Clients.list_clients.clear()
 
         connector.commit()
         connector.close()
@@ -114,16 +113,15 @@ class Sale:
         return "N° {}, {} and {}".format(self.id, self.transaction_state, self.service_state)
 
 class Sales:
-    connector = sql.connect(configs.DATABASE_PATH)
+    list_sales = []
+
+    connector = sql.connect('data.db')
     cursor = connector.cursor()
 
     cursor.execute("CREATE TABLE IF NOT EXISTS sales" \
                    "(id INTEGER PRIMARY KEY AUTOINCREMENT, client_id VARCHAR, date VARCHAR, cash INTEGER, transaction_state VARCHAR, service_state VARCHAR, FOREIGN KEY (client_id) REFERENCES clients(id))")
-    
-    list_sales = []
 
-    content = cursor.execute("SELECT FROM * sales")
-
+    content = cursor.execute('SELECT * FROM sales').fetchall()
     for id, client_id, date, cash, transaction_state, service_state in content:
         sale = Sale(id, client_id, date, cash, transaction_state, service_state)
         list_sales.append(sale)
@@ -138,11 +136,11 @@ class Sales:
             
     @staticmethod
     def add_sale(id, client_id, date, cash, transaction_state, service_state):
-        connector = sql.connect(configs.DATABASE_PATH)
+        connector = sql.connect('data.db')
         cursor = connector.cursor()
         
         sale = Sale(id, client_id, date, cash, transaction_state, service_state)
-        cursor.execute("INSERT INTO sales(id, client_id, date, cash, transaction_state, service_state) VALUES(?, ?, ?, ?, ?, ?)" (sale.id, sale.client_id, sale.date, sale.cash, sale.transaction_state, sale.service_state))
+        cursor.execute("INSERT INTO sales(id, client_id, date, cash, transaction_state, service_state) VALUES(?, ?, ?, ?, ?, ?)", (sale.id, sale.client_id, sale.date, sale.cash, sale.transaction_state, sale.service_state))
 
         connector.commit()
         connector.close()
@@ -151,7 +149,7 @@ class Sales:
 
     @staticmethod
     def modificate_sale(id, transaction_state, service_state):
-        connector = sql.connect(configs.DATABASE_PATH)
+        connector = sql.connect('data.db')
         cursor = connector.cursor()
 
         for i, sale in enumerate(Sales.list_sales):
@@ -165,7 +163,7 @@ class Sales:
         connector.close()
     @staticmethod
     def remove_sale(id):
-        connector = sql.connect(configs.DATABASE_PATH)
+        connector = sql.connect('data.db')
         cursor = connector.cursor()
 
         for i, sale in enumerate(Sales.list_sales):
@@ -179,7 +177,7 @@ class Sales:
 
     @staticmethod
     def add_many_sales(list_new_sales):
-        connector = sql.connect(configs.DATABASE_PATH)
+        connector = sql.connect('data.db')
         cursor = connector.cursor()
 
         for any in list_new_sales:
@@ -192,10 +190,11 @@ class Sales:
 
     @staticmethod
     def remove_all_sales():
-        connector = sql.connect(configs.DATABASE_PATH)
+        connector = sql.connect('data.db')
         cursor = connector.cursor()
 
         cursor.execute("DELETE FROM sales;")
+        Sales.list_sales.clear()
 
         connector.commit()
         connector.close()
