@@ -80,9 +80,6 @@ class Sale:
         self.transaction_state = transaction_state
         self.service_state = service_state
     
-    def __str__(self):
-        return "N° {}, {} and {}".format(self.id, self.transaction_state, self.service_state)
-
 class Sales:
     list_sales = []
 
@@ -106,7 +103,6 @@ class Sales:
         with ConnectionCommit(DATABASE_PATH) as cursor: 
             sale = Sale(id, client_id, date, cash, transaction_state, service_state)
             cursor.execute("INSERT INTO sales(id, client_id, date, cash, transaction_state, service_state) VALUES(?, ?, ?, ?, ?, ?)", (sale.id, sale.client_id, sale.date, sale.cash, sale.transaction_state, sale.service_state))
-
             return sale
 
     @staticmethod
@@ -141,3 +137,71 @@ class Sales:
         with ConnectionCommit(DATABASE_PATH) as cursor:
             cursor.execute("DELETE FROM sales;")
             Sales.list_sales.clear()
+
+class Worker:
+    def __init__(self, id, name, surname, position, salary):
+        self.id = id
+        self.name = name
+        self.surname = surname
+        self.position = position
+        self.salary = salary
+
+class Workers:
+    list_workers = []
+
+    with SimpleConnection(DATABASE_PATH) as cursor:
+        cursor.execute("CREATE TABLE IF NOT EXISTS workers" \
+                    "(id VARCHAR PRIMARY KEY, name VARCHAR, surname VARCHAR, position VARCHAR, salary INTEGER)")
+        
+        content = cursor.execute('SELECT * FROM workers').fetchall()
+        for id, name, surname, position, salary in content:
+            worker = Worker(id, name, surname, position, salary)
+            list_workers.append(worker)
+
+    @staticmethod
+    def search_worker(id):
+        for worker in Workers.list_workers:
+            if worker.id == id:
+                return worker
+            
+    @staticmethod
+    def add_worker(id, name, surname, position, salary):
+        with ConnectionCommit(DATABASE_PATH) as cursor:
+            worker = Worker(id, name, surname, position, salary)
+            Workers.list_workers.append(worker)
+            cursor.execute('INSERT INTO workers(id, name, surname, position, salary) VALUES(?, ?, ?, ?, ?)', (worker.id, worker.name, worker.surname, worker.position, worker.salary))
+            return worker
+        
+    @staticmethod
+    def modificate_worker(id, name, surname, position, salary):
+        with ConnectionCommit(DATABASE_PATH) as cursor:
+            for i, worker in enumerate(Workers.list_workers):
+                if worker.id == id:
+                    Workers.list_workers[i].name = name
+                    Workers.list_workers[i].surname = surname
+                    Workers.list_workers[i].position = position
+                    Workers.list_workers[i].salary = salary
+                    cursor.execute('UPDATE workers SET name = ?, surname = ?, position = ?, salary = ? WHERE id = ?', (worker.name, worker.surname, worker.position, worker.salary, worker.id))
+                    return Workers.list_workers[i]
+                
+    @staticmethod
+    def remove_worker(id):
+        with ConnectionCommit(DATABASE_PATH) as cursor:
+            for i, worker in enumerate(Workers.list_workers):
+                if worker.id == id:
+                    Workers.list_workers.pop(i)
+                    cursor.execute('DELETE FROM works WHERE id = ?', (id))
+                    return worker
+                
+    @staticmethod
+    def add_many_workers(list_new_workers):
+        with ConnectionCommit(DATABASE_PATH) as cursor:
+            for any in list_new_workers:
+                worker = Worker(any[0], any[1], any[2], any[3], any[4])
+                Workers.list_workers.append(worker)
+                cursor.execute('INSERT INTO workers(id, name, surname, position, salary) VALUES (?, ?, ?, ?, ?)', (worker.id, worker.name, worker.surname, worker.position, worker.salary))
+
+    @staticmethod
+    def remove_all_workers():
+        with ConnectionCommit(DATABASE_PATH) as cursor:
+            cursor.execute('DELETE FROM workers;')
