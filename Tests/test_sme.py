@@ -48,8 +48,8 @@ class TestDatabase(unittest.TestCase):
 
     def test_add_many_clients(self):
         previous_list_clients = copy(Clients.load_clients())
-        list_of_new_clients = [Client("DEF-4", "Emily", "Brown", "Female", 35),
-                               Client("456-A", "James", "Williams", "Male", 28)]
+        list_of_new_clients = [Client('DEF-4', 'Emily', 'Brown', 'F', 35),
+                               Client('456-A', 'James', 'Williams', 'M', 28)]
         Clients.add_many_clients(list_of_new_clients)
         difference_totals = len(Clients.load_clients()) - len(previous_list_clients)
         self.assertEqual(difference_totals, 2)
@@ -68,7 +68,7 @@ class TestDatabase(unittest.TestCase):
         empty_list = len(new_register)
         self.assertEqual(empty_list, 0)
 
-    # def test_date(self):
-    #     #test done in 17/04/2024
-    #     today = dt.date()
-    #     self.assertEqual(today, '17/04/2024')
+    def test_date(self):
+        #test done in 27/04/2024
+        today = dt.date()
+        self.assertEqual(today, '27/04/2024')
