@@ -54,21 +54,22 @@ class TestDatabase(unittest.TestCase):
         difference_totals = len(Clients.load_clients()) - len(previous_list_clients)
         self.assertEqual(difference_totals, 2)
 
-    def test_valid_id(self):
-        list_clients = Clients.load_clients()
-        self.assertTrue(vid.valid_id('34W-W', list_clients))
-        self.assertFalse(vid.valid_id('75480', list_clients))
-        self.assertFalse(vid.valid_id('04G-a', list_clients))
-        self.assertFalse(vid.valid_id('5t6-y', list_clients))
-        self.assertFalse(vid.valid_id('ABC-1', list_clients))
-
     def test_remove_all_clients(self):
         Clients.remove_all_clients()
         new_register = Clients.load_clients()
         empty_list = len(new_register)
         self.assertEqual(empty_list, 0)
 
-    def test_date(self):
-        #test done in 27/04/2024
-        today = dt.date()
-        self.assertEqual(today, '27/04/2024')
+class TestAuxiliars(unittest.TestCase):
+        def test_valid_id(self):
+            list_clients = Clients.load_clients()
+            self.assertTrue(vid.valid_id('34W-W', list_clients))
+            self.assertFalse(vid.valid_id('75480', list_clients))
+            self.assertFalse(vid.valid_id('04G-a', list_clients))
+            self.assertFalse(vid.valid_id('5t6-y', list_clients))
+            self.assertFalse(vid.valid_id('ABC-1', list_clients))
+
+        def test_date(self):
+            #test done in 27/04/2024
+            today = dt.date()
+            self.assertEqual(today, '27/04/2024')
