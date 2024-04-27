@@ -9,67 +9,44 @@ class Client:
         self.age = age
         
 class Clients:
-    list_clients = []
+    DatabaseFunctions.create_tables('1')
 
-    with SimpleConnection(DATABASE_PATH) as cursor:
-        cursor.execute("CREATE TABLE IF NOT EXISTS clients" \
-                    "(id VARCHAR PRIMARY KEY, name VARCHAR, surname VARCHAR, gender VARCHAR, age INTEGER)")
-    
-        content = cursor.execute('SELECT * FROM clients').fetchall()
-        for id, name, surname, gender, age in content:
-            client = Client(id, name, surname, gender, age)
-            list_clients.append(client) 
+    @staticmethod
+    def load_clients():
+        return DatabaseFunctions.load_from_table('clients', Client)
 
     @staticmethod
     def search_client(id):
-        for client in Clients.list_clients:
+        clients = Clients.load_clients()
+        for client in clients:
             if client.id == id:
                 return client
 
     @staticmethod
     def add_client(id, name, surname, gender, age):
-        with ConnectionCommit(DATABASE_PATH) as cursor: 
-            client = Client(id, name, surname, gender, age)
-            Clients.list_clients.append(client) 
-            cursor.execute("INSERT INTO clients(id, name, surname, gender, age) VALUES(?, ?, ?, ?, ?)", (client.id, client.name, client.surname, client.gender, client.age))
-           
-            return client
-    
+        client = Client(id, name, surname, gender, age)
+        DatabaseFunctions.insert_register('clients', ['id', 'name', 'surname', 'gender', 'age'], [id, name, surname, gender, age])
+        return client
+
     @staticmethod
     def modificate_client(id, name, surname, gender, age):
-        with ConnectionCommit(DATABASE_PATH) as cursor: 
-             for i, client in enumerate(Clients.list_clients):
-                if client.id == id:
-                    Clients.list_clients[i].name = name
-                    Clients.list_clients[i].surname = surname
-                    Clients.list_clients[i].gender = gender
-                    Clients.list_clients[i].age = age 
-                    cursor.execute("UPDATE clients SET name = ?, surname = ?, gender = ?, age = ? WHERE id = ?", (client.name, client.surname, client.gender, client.age, client.id))
-                
-                    return Clients.list_clients[i]
+        DatabaseFunctions.update_register('clients', ['name', 'surname', 'gender', 'age'], [name, surname, gender, age, id])
+        return Clients.search_client(id)
             
     @staticmethod          
     def remove_client(id):
-        with ConnectionCommit(DATABASE_PATH) as cursor:
-            for index, client in enumerate(Clients.list_clients):
-                if client.id == id:
-                    Clients.list_clients.pop(index)
-                    cursor.execute("DELETE FROM clients WHERE id = ?", (id,))
-                    return client
+        client = Clients.search_client(id)
+        DatabaseFunctions.delete_register('clients', id)
+        return client
 
     @staticmethod
     def add_many_clients(list_new_clients):
-        with ConnectionCommit(DATABASE_PATH) as cursor:
-            for any in list_new_clients:
-                client = Client(any[0], any[1], any[2], any[3], any[4])
-                Clients.list_clients.append(client) 
-                cursor.execute("INSERT INTO clients(id, name, surname, gender, age) VALUES(?, ?, ?, ?, ?)", (client.id, client.name, client.surname, client.gender, client.age))
+        for client in list_new_clients:
+            DatabaseFunctions.insert_register('clients', ['id', 'name', 'surname', 'gender', 'age'], [client.id, client.name, client.surname, client.gender, client.age])
 
     @staticmethod
     def remove_all_clients(): 
-        with ConnectionCommit(DATABASE_PATH) as cursor:
-            cursor.execute("DELETE FROM clients;")
-            Clients.list_clients.clear()
+        DatabaseFunctions.remove_all_registers('clients')
 
 class Sale:
     def __init__(self, id, client_id, date, cash, transaction_state, service_state):
@@ -81,20 +58,14 @@ class Sale:
         self.service_state = service_state
     
 class Sales:
-    list_sales = []
-
-    with SimpleConnection(DATABASE_PATH) as cursor:
-        cursor.execute("CREATE TABLE IF NOT EXISTS sales" \
-                    "(id INTEGER PRIMARY KEY AUTOINCREMENT, client_id VARCHAR, date VARCHAR, cash INTEGER, transaction_state VARCHAR, service_state VARCHAR, FOREIGN KEY (client_id) REFERENCES clients(id))")
-
-        content = cursor.execute('SELECT * FROM sales').fetchall()
-        for id, client_id, date, cash, transaction_state, service_state in content:
-            sale = Sale(id, client_id, date, cash, transaction_state, service_state)
-            list_sales.append(sale)
-
+    @staticmethod
+    def load_sales():
+        return DatabaseFunctions.load_from_table('clients', Sales)
+    
     @staticmethod
     def search_sale(id):
-        for sale in Sales.list_sales:
+        sales = Sales.load_sales()
+        for sale in sales:
             if sale.id == id:
                 return sale
             
