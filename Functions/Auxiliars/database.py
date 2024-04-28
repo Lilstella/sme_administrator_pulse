@@ -50,7 +50,7 @@ class DatabaseFunctions:
                                 '(id VARCHAR PRIMARY KEY, name VARCHAR, surname VARCHAR, gender VARCHAR, age INTEGER)')
                 case '2':
                     cursor.execute('CREATE TABLE IF NOT EXISTS sales'\
-                                '(id INTEGER PRIMARY KEY AUTOINCREMENT, client_id VARCHAR, date VARCHAR, cash INTEGER, transaction_state VARCHAR, service_state VARCHAR, FOREIGN KEY (client_id) REFERENCES clients(id))')
+                                '(id VARCHAR PRIMARY KEY, client_id VARCHAR, date VARCHAR, cash INTEGER, transaction_state VARCHAR, service_state VARCHAR, FOREIGN KEY (client_id) REFERENCES clients(id))')
                 case '3':    
                     cursor.execute('CREATE TABLE IF NOT EXISTS workers'\
                                 '(id VARCHAR PRIMARY KEY, name VARCHAR, surname VARCHAR, position VARCHAR, salary INTEGER)')
@@ -70,7 +70,7 @@ class DatabaseFunctions:
             try:
                 cursor.execute(f'INSERT INTO {model_table}({place_columns}) VALUES({place_holders})', register_columns)
             except sql.IntegrityError:
-                print('The client exits')
+                print(f'The {model_table} exits')
 
     @staticmethod
     def update_register(model_table, model_colums, register_columns):
