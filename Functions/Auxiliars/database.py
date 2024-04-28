@@ -47,13 +47,13 @@ class DatabaseFunctions:
             match case:
                 case '1':
                     cursor.execute('CREATE TABLE IF NOT EXISTS clients'\
-                                '(id VARCHAR PRIMARY KEY, name VARCHAR, surname VARCHAR, gender VARCHAR, age INTEGER)')
+                                '(id VARCHAR PRIMARY KEY NOT NULL, name VARCHAR NOT NULL, surname VARCHAR NOT NULL, gender VARCHAR, age INTEGER, email VARCHAR PRIMARY KEY)')
                 case '2':
                     cursor.execute('CREATE TABLE IF NOT EXISTS sales'\
                                 '(id VARCHAR PRIMARY KEY, client_id VARCHAR, date VARCHAR, cash INTEGER, transaction_state VARCHAR, service_state VARCHAR, FOREIGN KEY (client_id) REFERENCES clients(id))')
                 case '3':    
                     cursor.execute('CREATE TABLE IF NOT EXISTS workers'\
-                                '(id VARCHAR PRIMARY KEY, name VARCHAR, surname VARCHAR, position VARCHAR, salary INTEGER)')
+                                '(id VARCHAR PRIMARY KEY NOT NULL, name VARCHAR NOT NULL, surname VARCHAR NOT NULL, position VARCHAR NOT NULL, salary INTEGER NOT NULL, email VARCHAR PRIMARY KEY)')
 
     @staticmethod        
     def load_from_table(model_table, model_class):

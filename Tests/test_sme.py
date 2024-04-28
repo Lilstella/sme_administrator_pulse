@@ -8,9 +8,9 @@ class TestModels:
     class TestModelClient(unittest.TestCase):
         def setUp(self):
             DatabaseFunctions.create_tables('1')
-            Clients.add_client('ABC-1', 'John', 'Doe', 'Male', 30)
-            Clients.add_client('XYZ-2', 'Alice', 'Smith', 'Female', 25)
-            Clients.add_client('123-3', 'Michael', 'Johnson', 'Male', 40)
+            Clients.add_client('ABC-1', 'John', 'Doe', 'Male', 30, 'tr@gmail.com')
+            Clients.add_client('XYZ-2', 'Alice', 'Smith', 'Female', 25, 'y@gmail.com')
+            Clients.add_client('123-3', 'Michael', 'Johnson', 'Male', 40, 'urs@gmail.com')
 
         def test_search_client(self):
             true_client = Clients.search_client('ABC-1')
@@ -20,7 +20,7 @@ class TestModels:
 
         def test_add_client(self):
             previous_list_client = copy(Clients.load_clients())
-            new_client = Clients.add_client('PLG-H', 'Marie', 'Curie', 'Female', 40)
+            new_client = Clients.add_client('PLG-H', 'Marie', 'Curie', 'Female', 40, 'l@gmail.com')
             new_list_clients = Clients.load_clients()
             new_client_in_db = Clients.search_client('PLG-H')
             diferrence_totals = len(new_list_clients) - len(previous_list_client)
@@ -34,7 +34,7 @@ class TestModels:
 
         def test_modificate_client(self):
             client_to_modificate = copy(Clients.search_client('XYZ-2'))
-            modificated_client = Clients.modificate_client('XYZ-2', 'Charlotte', 'Smith', 'Female', 25)
+            modificated_client = Clients.modificate_client('XYZ-2', 'Charlotte', 'Smith', 'Female', 25, 'sa@gmail.com')
             new_client = Clients.search_client('XYZ-2')
             self.assertEqual(client_to_modificate.name, 'Alice')
             self.assertEqual(modificated_client.name, 'Charlotte')
@@ -51,8 +51,8 @@ class TestModels:
 
         def test_add_many_clients(self):
             previous_list_clients = copy(Clients.load_clients())
-            list_of_new_clients = [Client('DEF-4', 'Emily', 'Brown', 'Female', 35),
-                                Client('456-A', 'James', 'Williams', 'Male', 28)]
+            list_of_new_clients = [Client('DEF-4', 'Emily', 'Brown', 'Female', 35, 'cde@gmail.com'),
+                                Client('456-A', 'James', 'Williams', 'Male', 28, 'efvg@gmail.com')]
             Clients.add_many_clients(list_of_new_clients)
             difference_totals = len(Clients.load_clients()) - len(previous_list_clients)
             self.assertEqual(difference_totals, 2)
@@ -66,7 +66,7 @@ class TestModels:
     class TestModelSale(unittest.TestCase):
         def setUp(self):
             DatabaseFunctions.create_tables('2')
-            Clients.add_client('NJ8-9', 'John', 'Doe', 'Male', 30)
+            Clients.add_client('NJ8-9', 'John', 'Doe', 'Male', 30, 'as@gmail.com')
             Sales.add_sale('000-1', 'NJ8-9', '27/04/2024', 500, 'completed', 'active')
             Sales.add_sale('7U0-7', 'NJ8-9', '30/03/2024', 50, 'pending', 'active')
             Sales.add_sale('M09-6', 'NJ8-9', '14/03/2024', 1205, 'pending', 'inactive')
@@ -126,8 +126,8 @@ class TestModels:
     class TestModelWoker(unittest.TestCase):
         def setUp(self):
             DatabaseFunctions.create_tables('3')
-            Workers.add_worker('OPL-5', 'Carlos', 'Quintero', 'Cashier', 550)
-            Workers.add_worker('301-J', 'Nerea', 'Linares', 'Waitress', 750)
+            Workers.add_worker('OPL-5', 'Carlos', 'Quintero', 'Cashier', 550, 'plm@gmail.com')
+            Workers.add_worker('301-J', 'Nerea', 'Linares', 'Waitress', 750, 'yt@gmail.com')
 
         def test_search_worker(self):
             true_worker = Workers.search_worker('OPL-5')
@@ -137,7 +137,7 @@ class TestModels:
 
         def test_add_worker(self):
             previous_list_worker = copy(Workers.load_workers())
-            new_worker = Workers.add_worker('C40-0', 'Crystal', 'Moreno', 'Manager', 1500)
+            new_worker = Workers.add_worker('C40-0', 'Crystal', 'Moreno', 'Manager', 1500, 'oe@gmail.com')
             new_list_workers = Workers.load_workers()
             new_worker_in_db = Workers.search_worker('C40-0')
             difference_totals = len(new_list_workers) - len(previous_list_worker)
@@ -151,7 +151,7 @@ class TestModels:
 
         def test_modificate_worker(self):
             worker_to_modificate = copy(Workers.search_worker('301-J'))
-            modificated_client = Workers.modificate_worker('301-J', 'Maria', 'Linares', 'Waitress', 750)
+            modificated_client = Workers.modificate_worker('301-J', 'Maria', 'Linares', 'Waitress', 750, 'res@gmail.com')
             new_worker = Workers.search_worker('301-J')
             self.assertEqual(worker_to_modificate.name, 'Nerea')
             self.assertEqual(modificated_client.name, 'Maria')
@@ -168,8 +168,8 @@ class TestModels:
 
         def test_add_many_workers(self):
             previous_list_workers = copy(Workers.load_workers())
-            list_of_new_workers = [Worker('WAR-0', 'Tyron', 'Valenzuela', 'Chef', 1500), 
-                                   Worker('PAZ-0', 'Jenny', 'Rauch', 'Kitchen assistant', 200)]
+            list_of_new_workers = [Worker('WAR-0', 'Tyron', 'Valenzuela', 'Chef', 1500, 'pyg@gmail.com'), 
+                                   Worker('PAZ-0', 'Jenny', 'Rauch', 'Kitchen assistant', 200, 'ytd@gmail.com')]
             Workers.add_many_workers(list_of_new_workers)
             difference_totals = len(Workers.load_workers()) - len(previous_list_workers)
             self.assertEqual(difference_totals, 2)
