@@ -1,6 +1,6 @@
 from copy import copy
 import unittest
-from Functions.models import Client, Clients, Sale, Sales, Worker, Workers
+from Functions.models import *
 from Functions.Auxiliars import valid_id as vid, date as dt
 from Functions.Auxiliars.database import DatabaseFunctions
 
@@ -67,9 +67,9 @@ class TestModels:
         def setUp(self):
             DatabaseFunctions.create_tables('2')
             Clients.add_client('NJ8-9', 'John', 'Doe', 'Male', 30, 'as@gmail.com')
-            Sales.add_sale('000-1', 'NJ8-9', '27/04/2024', 500, 'completed', 'active')
-            Sales.add_sale('7U0-7', 'NJ8-9', '30/03/2024', 50, 'pending', 'active')
-            Sales.add_sale('M09-6', 'NJ8-9', '14/03/2024', 1205, 'pending', 'inactive')
+            Sales.add_sale('000-1', 'NJ8-9', '2024-05-10 21:30:00', 500, 'completed', 'active')
+            Sales.add_sale('7U0-7', 'NJ8-9', '2024-01-01 12:00:00', 50, 'pending', 'active')
+            Sales.add_sale('M09-6', 'NJ8-9', '2024-02-04 12:30:00', 1205, 'pending', 'inactive')
 
         def test_search_sale(self):
             true_sale = Sales.search_sale('M09-6')
@@ -180,6 +180,64 @@ class TestModels:
             empty_list = len(new_register)
             self.assertEqual(empty_list, 0)
 
+    class TestModelExpense(unittest.TestCase):
+        def setUp(self):
+            DatabaseFunctions.create_tables('4')
+            Workers.add_worker('KEY-0', 'Marco', 'Polo', 'Waiter', 21, 'jdsjdjs@gmail.com')
+            Expenses.add_expense('UIO-2', 'KEY-0', '2021-10-12 08:21:00', 500, 'active', 'Salary of Marco')
+            Expenses.add_expense('320-0', None, '2008-02-03 20:21:00', 30, 'inactive', 'Recompose a client')
+
+        def test_search_expense(self):
+            true_expense = Expenses.search_expense('UIO-2')
+            false_expense = Expenses.search_expense('010-0')
+            self.assertIsNotNone(true_expense)
+            self.assertIsNone(false_expense)
+
+        def test_add_expense(self):
+            previous_list_expense = copy(Expenses.load_expenses())
+            new_expense = Expenses.add_expense('T32-0', None, '2023-12-01 10:30:00', 5000, 'active', 'Pay bills')
+            new_expense_in_db = Expenses.search_expense('T32-0')
+            new_list_expense = Expenses.load_expenses()
+            difference_totals = len(new_list_expense) - len(previous_list_expense)
+            self.assertEqual(difference_totals, 1)
+            self.assertEqual(new_expense.id, 'T32-0')
+            self.assertEqual(new_expense.worker_id, None)
+            self.assertEqual(new_expense.date, '2023-12-01 10:30:00')
+            self.assertEqual(new_expense.cash, 5000)
+            self.assertEqual(new_expense.transaction_state, 'active')
+            self.assertEqual(new_expense.cash, new_expense_in_db.cash)
+
+        def test_modificate_expense(self):
+            expense_to_modificate = copy(Expenses.search_expense('UIO-2'))
+            modificated_expense = Expenses.modificate_expense('UIO-2', '2021-10-12 08:21:00', 600, 'active', 'Salary of Marco')
+            new_expense = Expenses.search_expense('UIO-2')
+            self.assertEqual(expense_to_modificate.cash, 500)
+            self.assertEqual(modificated_expense.cash, 600)
+            self.assertEqual(new_expense.cash, 600)
+
+        def test_remove_expense(self):
+            previous_list_expense = copy(Expenses.load_expenses())
+            removed_expense = Expenses.remove_expense('320-0')
+            searc_removed_expense = Expenses.search_expense('320-0')
+            difference_totals = len(previous_list_expense) - len(Expenses.load_expenses())
+            self.assertEqual(removed_expense.id, '320-0')
+            self.assertIsNone(searc_removed_expense)
+            self.assertEqual(difference_totals, 1)
+
+        def test_many_expenses(self):
+            previous_list_expenses = copy(Expenses.load_expenses())
+            list_of_new_expenses = [Expense('P20-0', None, '2019-09-23 10:05:00', 81, 'inactive', 'Replenish ingredients'),
+                                    Expense('P50-0', None, '2019-10-23 10:05:00', 100, 'inactive', 'Buy utensils')]
+            Expenses.add_many_expenses(list_of_new_expenses)
+            difference_totals = len(Expenses.load_expenses()) - len(previous_list_expenses)
+            self.assertEqual(difference_totals, 2)
+
+        def test_remove_all_expenses(self):
+            Expenses.remove_all_expenses()
+            new_register = Expenses.load_expenses()
+            empty_list = len(new_register)
+            self.assertEqual(empty_list, 0)
+
 class TestAuxiliars(unittest.TestCase):
         def test_valid_id(self):
             list_clients = Clients.load_clients()
@@ -190,6 +248,6 @@ class TestAuxiliars(unittest.TestCase):
             self.assertFalse(vid.valid_id('ABC-1', list_clients))
 
         def test_date(self):
-            #test done in 28/04/2024
+            #test done in 12/05/2024
             today = dt.date()
-            self.assertEqual(today, '28/04/2024')
+            self.assertEqual(today, '2024-05-12')

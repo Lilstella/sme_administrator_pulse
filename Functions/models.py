@@ -146,3 +146,52 @@ class Workers:
     @staticmethod
     def remove_all_workers():
         DatabaseFunctions.remove_all_registers('workers')
+
+class Expense:
+    def __init__(self, id, worker_id, date, cash, transaction_state, description):
+        self.id = id
+        self.worker_id = worker_id
+        self.date = date
+        self.cash = cash
+        self.transaction_state = transaction_state
+        self.description = description
+
+class Expenses:
+    DatabaseFunctions.create_tables('4')
+
+    @staticmethod
+    def load_expenses():
+        return DatabaseFunctions.load_from_table('expenses', Expense)
+    
+    @staticmethod
+    def search_expense(id):
+        expenses = Expenses.load_expenses()
+        for expense in expenses:
+            if expense.id == id:
+                return expense
+            
+    @staticmethod
+    def add_expense(id, worker_id, date, cash, transaction_state, description):
+        expense = Expense(id, worker_id, date, cash, transaction_state, description)
+        DatabaseFunctions.insert_register('expenses', ['id', 'worker_id', 'date', 'cash', 'transaction_state', 'description'], [id, worker_id, date, cash, transaction_state, description])
+        return expense
+    
+    @staticmethod
+    def modificate_expense(id, date, cash, transaction_state, description):
+        DatabaseFunctions.update_register('expenses', ['date', 'cash', 'transaction_state', 'description'], [date, cash, transaction_state, description, id])
+        return Expenses.search_expense(id)
+    
+    @staticmethod
+    def remove_expense(id):
+        expense = Expenses.search_expense(id)
+        DatabaseFunctions.delete_register('expenses', id)
+        return expense
+
+    @staticmethod
+    def add_many_expenses(list_new_expenses):
+        for expense in list_new_expenses:
+            DatabaseFunctions.insert_register('expenses', ['id', 'worker_id', 'date', 'cash', 'transaction_state', 'description'], [expense.id, expense.worker_id, expense.date, expense.cash, expense.transaction_state, expense.description])
+
+    @staticmethod
+    def remove_all_expenses():
+        DatabaseFunctions.remove_all_registers('expenses')
