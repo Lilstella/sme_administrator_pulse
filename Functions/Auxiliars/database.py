@@ -47,13 +47,13 @@ class DatabaseFunctions:
             match case:
                 case '1':
                     cursor.execute('CREATE TABLE IF NOT EXISTS clients'\
-                                '(id TEXT PRIMARY KEY NOT NULL, name TEXT NOT NULL, surname TEXT NOT NULL, gender TEXT, age INT, email TEXT PRIMARY KEY)')
+                                '(id TEXT NOT NULL, name TEXT NOT NULL, surname TEXT NOT NULL, gender TEXT, age INT, mail TEXT, PRIMARY KEY(id, mail))')
                 case '2':
                     cursor.execute('CREATE TABLE IF NOT EXISTS sales'\
-                                '(id TEXT PRIMARY KEY, client_id TEXT, date DATETIME, cash INT, transaction_state TEXT, service_state TEXT, FOREIGN KEY (client_id) REFERENCES clients(id))')
+                                '(id TEXT PRIMARY KEY, client_id TEXT, date DATETIME, cash INT, transaction_state TEXT, service_state TEXT, description TEXT, FOREIGN KEY (client_id) REFERENCES clients(id))')
                 case '3':    
                     cursor.execute('CREATE TABLE IF NOT EXISTS workers'\
-                                '(id TEXT PRIMARY KEY NOT NULL, name TEXT NOT NULL, surname TEXT NOT NULL, position TEXT NOT NULL, salary INT NOT NULL, email TEXT PRIMARY KEY)')
+                                '(id TEXT NOT NULL, name TEXT NOT NULL, surname TEXT NOT NULL, position TEXT NOT NULL, salary INT NOT NULL, mail TEXT, PRIMARY KEY(id, mail))')
                     
                 case '4':
                     cursor.execute('CREATE TABLE IF NOT EXISTS expenses'\

@@ -67,9 +67,9 @@ class TestModels:
         def setUp(self):
             DatabaseFunctions.create_tables('2')
             Clients.add_client('NJ8-9', 'John', 'Doe', 'Male', 30, 'as@gmail.com')
-            Sales.add_sale('000-1', 'NJ8-9', '2024-05-10 21:30:00', 500, 'completed', 'active')
-            Sales.add_sale('7U0-7', 'NJ8-9', '2024-01-01 12:00:00', 50, 'pending', 'active')
-            Sales.add_sale('M09-6', 'NJ8-9', '2024-02-04 12:30:00', 1205, 'pending', 'inactive')
+            Sales.add_sale('000-1', 'NJ8-9', '2024-05-10 21:30:00', 150, 'completed', 'active', 'X5 Pasta Bolognese Combo')
+            Sales.add_sale('7U0-7', 'NJ8-9', '2024-01-01 12:00:00', 50, 'pending', 'active', 'X1 Large Neapolitan Pizza & X1 Large Jam Pizza')
+            Sales.add_sale('M09-6', 'NJ8-9', '2024-02-04 12:30:00', 10, 'pending', 'inactive', 'X1 Caprese Salad')
 
         def test_search_sale(self):
             true_sale = Sales.search_sale('M09-6')
@@ -79,7 +79,7 @@ class TestModels:
 
         def test_add_sale(self):
             previous_list_sale = copy(Sales.load_sales())
-            new_sale = Sales.add_sale('B70-2', 'NJ8-9', '27/01/2024', 400, 'pending', 'inactive')
+            new_sale = Sales.add_sale('B70-2', 'NJ8-9', '27/01/2024', 400, 'pending', 'inactive', 'X3 Large Sicilian Pizza & X1 Tignanello Bottle')
             new_sale_in_db = Sales.search_sale('B70-2')
             new_list_sale = Sales.load_sales()
             difference_totals = len(new_list_sale) - len(previous_list_sale)
@@ -94,11 +94,11 @@ class TestModels:
 
         def test_modificate_sale(self):
             sale_to_modificate = copy(Sales.search_sale('7U0-7'))
-            modificated_sale = Sales.modificate_sale('7U0-7', 32, 'completed', 'inactive')
+            modificated_sale = Sales.modificate_sale('7U0-7', 25, 'completed', 'inactive', 'X1 Large Jam Pizza')
             new_sale = Sales.search_sale('7U0-7')
             self.assertEqual(sale_to_modificate.cash, 50)
-            self.assertEqual(modificated_sale.cash, 32)
-            self.assertEqual(new_sale.cash, 32)
+            self.assertEqual(modificated_sale.cash, 25)
+            self.assertEqual(new_sale.cash, 25)
 
         def test_remove_sale(self):
             previous_list_sales = copy(Sales.load_sales())
@@ -111,8 +111,8 @@ class TestModels:
 
         def test_many_sales(self):
             previous_list_sales = copy(Sales.load_sales())
-            list_of_new_sales = [Sale('65H-Q', 'NJ8-9', '12/07/2023', 90, 'completed', 'active'),
-                                Sale('01G-N', 'NJ8-9', '12/07/2023', 23, 'pending', 'inactive')]
+            list_of_new_sales = [Sale('65H-Q', 'NJ8-9', '12/07/2023', 90, 'completed', 'active', 'X1 Gnocchi Arrabbiata & X1 Ossobuco'),
+                                Sale('01G-N', 'NJ8-9', '12/07/2023', 23, 'pending', 'inactive', 'X1 Castagnaccio & X1 Ristretto')]
             Sales.add_many_sales(list_of_new_sales)
             difference_totals = len(Sales.load_sales()) - len(previous_list_sales)
             self.assertEqual(difference_totals, 2)

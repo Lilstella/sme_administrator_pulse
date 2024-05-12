@@ -1,13 +1,13 @@
 from Functions.Auxiliars.database import *
 
 class Client:
-    def __init__(self, id, name, surname, gender, age, email):
+    def __init__(self, id, name, surname, gender, age, mail):
         self.id = id
         self.name = name
         self.surname = surname
         self.gender = gender
         self.age = age
-        self.email = email
+        self.mail = mail
         
 class Clients:
     DatabaseFunctions.create_tables('1')
@@ -24,14 +24,14 @@ class Clients:
                 return client
 
     @staticmethod
-    def add_client(id, name, surname, gender, age, email):
-        client = Client(id, name, surname, gender, age, email)
-        DatabaseFunctions.insert_register('clients', ['id', 'name', 'surname', 'gender', 'age', 'email'], [id, name, surname, gender, age, email])
+    def add_client(id, name, surname, gender, age, mail):
+        client = Client(id, name, surname, gender, age, mail)
+        DatabaseFunctions.insert_register('clients', ['id', 'name', 'surname', 'gender', 'age', 'mail'], [id, name, surname, gender, age, mail])
         return client
 
     @staticmethod
-    def modificate_client(id, name, surname, gender, age, email):
-        DatabaseFunctions.update_register('clients', ['name', 'surname', 'gender', 'age', 'email'], [name, surname, gender, age, email, id])
+    def modificate_client(id, name, surname, gender, age, mail):
+        DatabaseFunctions.update_register('clients', ['name', 'surname', 'gender', 'age', 'mail'], [name, surname, gender, age, mail, id])
         return Clients.search_client(id)
             
     @staticmethod          
@@ -43,20 +43,21 @@ class Clients:
     @staticmethod
     def add_many_clients(list_new_clients):
         for client in list_new_clients:
-            DatabaseFunctions.insert_register('clients', ['id', 'name', 'surname', 'gender', 'age', 'email'], [client.id, client.name, client.surname, client.gender, client.age, client.email])
+            DatabaseFunctions.insert_register('clients', ['id', 'name', 'surname', 'gender', 'age', 'mail'], [client.id, client.name, client.surname, client.gender, client.age, client.mail])
 
     @staticmethod
     def remove_all_clients(): 
         DatabaseFunctions.remove_all_registers('clients')
 
 class Sale:
-    def __init__(self, id, client_id, date, cash, transaction_state, service_state):
+    def __init__(self, id, client_id, date, cash, transaction_state, service_state, description):
         self.id = id
         self.client_id = client_id
         self.date = date
         self.cash = cash
         self.transaction_state = transaction_state
         self.service_state = service_state
+        self.description = description
     
 class Sales:
     DatabaseFunctions.create_tables('2')
@@ -73,14 +74,14 @@ class Sales:
                 return sale
             
     @staticmethod
-    def add_sale(id, client_id, date, cash, transaction_state, service_state):
-        sale = Sale(id, client_id, date, cash, transaction_state, service_state)
-        DatabaseFunctions.insert_register('sales', ['id', 'client_id', 'date', 'cash', 'transaction_state', 'service_state'], [id, client_id, date, cash, transaction_state, service_state])
+    def add_sale(id, client_id, date, cash, transaction_state, service_state, description):
+        sale = Sale(id, client_id, date, cash, transaction_state, service_state, description)
+        DatabaseFunctions.insert_register('sales', ['id', 'client_id', 'date', 'cash', 'transaction_state', 'service_state', 'description'], [id, client_id, date, cash, transaction_state, service_state, description])
         return sale
 
     @staticmethod
-    def modificate_sale(id, cash, transaction_state, service_state):
-        DatabaseFunctions.update_register('sales', ['cash', 'transaction_state', 'service_state'], [cash, transaction_state, service_state, id])
+    def modificate_sale(id, cash, transaction_state, service_state, description):
+        DatabaseFunctions.update_register('sales', ['cash', 'transaction_state', 'service_state', 'description'], [cash, transaction_state, service_state, description, id])
         return Sales.search_sale(id)
             
     @staticmethod
@@ -92,20 +93,20 @@ class Sales:
     @staticmethod
     def add_many_sales(list_new_sales):
         for sale in list_new_sales:
-            DatabaseFunctions.insert_register('sales', ['id', 'client_id', 'date', 'cash', 'transaction_state', 'service_state'], [sale.id, sale.client_id, sale.date, sale.cash, sale.transaction_state, sale.service_state])
+            DatabaseFunctions.insert_register('sales', ['id', 'client_id', 'date', 'cash', 'transaction_state', 'service_state', 'description'], [sale.id, sale.client_id, sale.date, sale.cash, sale.transaction_state, sale.service_state, sale.description])
 
     @staticmethod
     def remove_all_sales():
         DatabaseFunctions.remove_all_registers('sales')
 
 class Worker:
-    def __init__(self, id, name, surname, position, salary, email):
+    def __init__(self, id, name, surname, position, salary, mail):
         self.id = id
         self.name = name
         self.surname = surname
         self.position = position
         self.salary = salary
-        self.email = email
+        self.mail = mail
 
 class Workers:
     DatabaseFunctions.create_tables('3')
@@ -122,14 +123,14 @@ class Workers:
                 return worker
             
     @staticmethod
-    def add_worker(id, name, surname, position, salary, email):
-        worker = Worker(id, name, surname, position, salary, email)
-        DatabaseFunctions.insert_register('workers', ['id', 'name', 'surname', 'position', 'salary', 'email'], [id, name, surname, position, salary, email])
+    def add_worker(id, name, surname, position, salary, mail):
+        worker = Worker(id, name, surname, position, salary, mail)
+        DatabaseFunctions.insert_register('workers', ['id', 'name', 'surname', 'position', 'salary', 'mail'], [id, name, surname, position, salary, mail])
         return worker
         
     @staticmethod
-    def modificate_worker(id, name, surname, position, salary, email):
-        DatabaseFunctions.update_register('workers', ['name', 'surname', 'position', 'salary', 'email'], [name, surname, position, salary, email, id])
+    def modificate_worker(id, name, surname, position, salary, mail):
+        DatabaseFunctions.update_register('workers', ['name', 'surname', 'position', 'salary', 'mail'], [name, surname, position, salary, mail, id])
         return Workers.search_worker(id)
                 
     @staticmethod
@@ -141,7 +142,7 @@ class Workers:
     @staticmethod
     def add_many_workers(list_new_workers):
         for worker in list_new_workers:
-            DatabaseFunctions.insert_register('workers', ['id', 'name', 'surname', 'position', 'salary', 'email'], [worker.id, worker.name, worker.surname, worker.position, worker.salary, worker.email])
+            DatabaseFunctions.insert_register('workers', ['id', 'name', 'surname', 'position', 'salary', 'mail'], [worker.id, worker.name, worker.surname, worker.position, worker.salary, worker.mail])
 
     @staticmethod
     def remove_all_workers():
