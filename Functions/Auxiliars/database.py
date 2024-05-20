@@ -58,7 +58,10 @@ class DatabaseFunctions:
                 case '4':
                     cursor.execute('CREATE TABLE IF NOT EXISTS expenses'\
                                 '(id TEXT PRIMARY KEY NOT NULL, worker_id TEXT, date DATETIME, cash INT, transaction_state TEXT, description TEXT, FOREIGN KEY (worker_id) REFERENCES workers(id))')
-
+                
+                case '5':
+                    cursor.execute('CREATE TABLE IF NOT EXISTS tasks'\
+                                   '(id INT PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, content TEXT NOT NULL, state BOOLEAN NOT NULL)')
     @staticmethod        
     def load_from_table(model_table, model_class):
         with SimpleConnection(DATABASE_PATH) as cursor:

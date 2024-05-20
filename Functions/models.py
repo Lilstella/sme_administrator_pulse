@@ -196,3 +196,45 @@ class Expenses:
     @staticmethod
     def remove_all_expenses():
         DatabaseFunctions.remove_all_registers('expenses')
+
+class Task:
+    def __init__(self, id, title, content, state):
+        self.id = id
+        self.title = title
+        self.content = content
+        self.state = state
+
+class Tasks:
+    DatabaseFunctions.create_tables('5')
+
+    @staticmethod
+    def load_tasks():
+        return DatabaseFunctions.load_from_table('tasks', Task)
+    
+    @staticmethod
+    def search_task(id):
+        tasks = Tasks.load_tasks()
+        for task in tasks:
+            if task.id == id:
+                return task
+            
+    @staticmethod
+    def add_task(id, title, content, state):
+        task = Task(id, title, content, state)
+        DatabaseFunctions.insert_register('tasks', ['id', 'title', 'content', 'state'], [id, title, content, state])
+        return task
+
+    @staticmethod 
+    def modificate_task(id, title, content, state):
+        DatabaseFunctions.update_register('tasks', ['title', 'content', 'state'], [title, content, state, id])
+        return Tasks.search_task(id)
+
+    @staticmethod
+    def remove_task(id):
+        task = Tasks.search_task(id)
+        DatabaseFunctions.delete_register('tasks', id)
+        return task
+
+    @staticmethod
+    def remove_all_task():
+        DatabaseFunctions.remove_all_registers('tasks')
