@@ -1,10 +1,4 @@
 import sqlite3 as sql
-import sys
-
-DATABASE_PATH = 'sme.db'
-
-if 'pytest' in sys.argv[0]:
-    DATABASE_PATH = 'Tests/smetest.db'
 
 class ConnectionCommit:
     def __init__(self, db_file):
@@ -42,8 +36,8 @@ class SimpleConnection:
 
 class DatabaseFunctions:
     @staticmethod
-    def create_tables(case):
-        with SimpleConnection(DATABASE_PATH) as cursor:
+    def create_tables(case, db_file):
+        with SimpleConnection(db_file) as cursor:
             match case:
                 case '1':
                     cursor.execute('CREATE TABLE IF NOT EXISTS clients'\
@@ -63,15 +57,15 @@ class DatabaseFunctions:
                     cursor.execute('CREATE TABLE IF NOT EXISTS tasks'\
                                    '(id INT PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, content TEXT NOT NULL, state BOOLEAN NOT NULL)')
     @staticmethod        
-    def load_from_table(model_table, model_class):
-        with SimpleConnection(DATABASE_PATH) as cursor:
+    def load_from_table(model_table, model_class, db_file):
+        with SimpleConnection(db_file) as cursor:
             content = cursor.execute(f'SELECT * FROM {model_table}').fetchall()
             registers = [model_class(*param) for param in content]
             return registers
 
     @staticmethod    
-    def insert_register(model_table, model_colums, register_columns):
-        with ConnectionCommit(DATABASE_PATH) as cursor:
+    def insert_register(model_table, model_colums, register_columns, db_file):
+        with ConnectionCommit(db_file) as cursor:
             place_columns = ', '.join(model_colums)
             place_holders = ', '.join(['?' for _ in register_columns])
             try:
@@ -80,17 +74,17 @@ class DatabaseFunctions:
                 print(f'The {model_table} exits')
 
     @staticmethod
-    def update_register(model_table, model_colums, register_columns):
-        with ConnectionCommit(DATABASE_PATH) as cursor:
+    def update_register(model_table, model_colums, register_columns, db_file):
+        with ConnectionCommit(db_file) as cursor:
             place_columns = ', '.join(f'{column} = ?' for column in model_colums)
             cursor.execute(f'UPDATE {model_table} SET {place_columns} WHERE id = ?', register_columns)
 
     @staticmethod
-    def delete_register(model_table, condition):
-        with ConnectionCommit(DATABASE_PATH) as cursor:
+    def delete_register(model_table, condition, db_file):
+        with ConnectionCommit(db_file) as cursor:
             cursor.execute(f'DELETE FROM {model_table} WHERE id = ?', (condition,))
 
     @staticmethod
-    def remove_all_registers(model_table):
-        with ConnectionCommit(DATABASE_PATH) as cursor:
+    def remove_all_registers(model_table, db_file):
+        with ConnectionCommit(db_file) as cursor:
             cursor.execute(f'DELETE FROM {model_table};')
