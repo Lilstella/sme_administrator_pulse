@@ -206,11 +206,12 @@ class Expenses:
         DatabaseFunctions.remove_all_registers('expenses', db_file)
 
 class Task:
-    def __init__(self, id, title, content, state):
+    def __init__(self, id, worker_id, title, content, done):
         self.id = id
+        self.worker_id = worker_id
         self.title = title
         self.content = content
-        self.state = state
+        self.done = done
 
 class Tasks:
     @staticmethod
@@ -229,14 +230,14 @@ class Tasks:
                 return task
             
     @staticmethod
-    def add_task(id, title, content, state, db_file):
-        task = Task(id, title, content, state)
-        DatabaseFunctions.insert_register('tasks', ['id', 'title', 'content', 'state'], [id, title, content, state], db_file)
+    def add_task(id, worker_id, title, content, done, db_file):
+        task = Task(id, title, content, done)
+        DatabaseFunctions.insert_register('tasks', ['id', 'worker_id', 'title', 'content', 'done'], [id, worker_id, title, content, done], db_file)
         return task
 
     @staticmethod 
-    def modificate_task(id, title, content, state, db_file):
-        DatabaseFunctions.update_register('tasks', ['title', 'content', 'state'], [title, content, state, id], db_file)
+    def modificate_task(id, worker_id, title, content, done, db_file):
+        DatabaseFunctions.update_register('tasks', ['worker_id','title', 'content', 'done'], [worker_id, title, content, done, id], db_file)
         return Tasks.search_task(id, db_file)
 
     @staticmethod

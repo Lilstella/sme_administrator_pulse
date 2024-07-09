@@ -55,7 +55,7 @@ class DatabaseFunctions:
                 
                 case '5':
                     cursor.execute('CREATE TABLE IF NOT EXISTS tasks'\
-                                   '(id INT PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, content TEXT NOT NULL, state BOOLEAN NOT NULL)')
+                                   '(id TEXT PRIMARY KEY NOT NULL, worker_id TEXT, title TEXT NOT NULL, content TEXT NOT NULL, done BOOLEAN NOT NULL)')
     @staticmethod        
     def load_from_table(model_table, model_class, db_file):
         with SimpleConnection(db_file) as cursor:
