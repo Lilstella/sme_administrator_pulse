@@ -50,7 +50,7 @@ class InfoClients:
         return age_clients
 
     @staticmethod
-    def client_purchase_history(db_file, id):
+    def client_sales_history(db_file, id):
         total_sales = Sales.load_sales(db_file)
         client_history = []
 

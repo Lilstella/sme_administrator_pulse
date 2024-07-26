@@ -14,8 +14,8 @@ class SaveAllInExcel:
     @staticmethod
     def save_all_sales_in_excel(excel_file, db_file):
         sales = Sales.load_sales(db_file)
-        sales_data = [{'id': sale.id, 'client_id': sale.client_id, 'date': sale.date, 'cash': sale.cash, 'transaction_state': sale.transaction_state, 'service_state': sale.service_state, 'description': sale.description} for sale in sales]
-        sales_columns = ['id', 'client_id', 'date', 'cash', 'transaction_state', 'service_state', 'description']
+        sales_data = [{'id': sale.id, 'client_id': sale.client_id, 'date': sale.date, 'cash': sale.cash, 'paid': sale.paid, 'delivered': sale.delivered, 'description': sale.description} for sale in sales]
+        sales_columns = ['id', 'client_id', 'date', 'cash', 'paid', 'delivered', 'description']
 
         df = pd.DataFrame(sales_data, columns=sales_columns)
         df.to_excel(excel_file, sheet_name='Sales', index=False, engine='openpyxl')
@@ -32,8 +32,8 @@ class SaveAllInExcel:
     @staticmethod
     def save_all_expenses_in_excel(excel_file, db_file):
         expenses = Expenses.load_expenses(db_file)
-        expenses_data = [{'id': expense.id, 'worker_id': expense.worker_id, 'date': expense.date, 'cash': expense.cash, 'transaction_state': expense.transaction_state, 'description': expense.description} for expense in expenses]
-        expenses_columns = ['id', 'worker_id', 'date', 'cash', 'transaction_state', 'description']
+        expenses_data = [{'id': expense.id, 'worker_id': expense.worker_id, 'date': expense.date, 'cash': expense.cash, 'paid': expense.paid, 'description': expense.description} for expense in expenses]
+        expenses_columns = ['id', 'worker_id', 'date', 'cash', 'paid', 'description']
 
         df = pd.DataFrame(expenses_data, columns=expenses_columns)
         df.to_excel(excel_file, sheet_name='Expenses', index=False, engine='openpyxl')
@@ -59,7 +59,7 @@ class LoadAllFromTable:
     def load_sales_from_excel(excel_file):
         df = pd.read_excel(excel_file, sheet_name='Sales', engine='openpyxl')
         df = df.map(lambda value: None if pd.isna(value) else value)
-        sales = [Sale(row.id, row.client_id, row.date, row.cash, row.transaction_state, row.service_state, row.description) for row in df.itertuples(index=False)]
+        sales = [Sale(row.id, row.client_id, row.date, row.cash, row.paid, row.delivered, row.description) for row in df.itertuples(index=False)]
 
         return sales
 
@@ -75,7 +75,7 @@ class LoadAllFromTable:
     def load_expenses_from_excel(excel_file):
         df = pd.read_excel(excel_file, sheet_name='Expenses', engine='openpyxl')
         df = df.map(lambda value: None if pd.isna(value) else value)
-        expenses = [Expense(row.id, row.worker_id, row.date, row.cash, row.transaction_state, row.description) for row in df.itertuples(index=False)]
+        expenses = [Expense(row.id, row.worker_id, row.date, row.cash, row.paid, row.description) for row in df.itertuples(index=False)]
 
         return expenses
 
@@ -102,9 +102,9 @@ class SaveOneInExcel:
     @staticmethod
     def save_sale_in_excel(excel_file, sale):
         total_sales_in_excel = LoadAllFromTable.load_sales_from_excel(excel_file)
-        data_sale = {'id': sale.id, 'client_id': sale.client_id, 'date': sale.date, 'cash': sale.cash, 'transaction_state': sale.transaction_state, 'service_state': sale.service_state, 'description': sale.description}
+        data_sale = {'id': sale.id, 'client_id': sale.client_id, 'date': sale.date, 'cash': sale.cash, 'paid': sale.paid, 'delivered': sale.delivered, 'description': sale.description}
         total_sales_in_excel.append(data_sale)
-        sales_columns = ['id', 'client_id', 'date', 'cash', 'transaction_state', 'service_state', 'description']
+        sales_columns = ['id', 'client_id', 'date', 'cash', 'paid', 'delivered', 'description']
 
         total_sales_for_data = pd.DataFrame(total_sales_in_excel, columns=sales_columns)
         total_sales_for_data.to_excel(excel_file, sheet_name='Sales', index=False, engine='openpyxl')
@@ -122,9 +122,9 @@ class SaveOneInExcel:
     @staticmethod
     def save_expense_in_excel(excel_file, expense):
         total_expenses_in_excel = LoadAllFromTable.load_expenses_from_excel(excel_file)
-        data_expense = {'id': expense.id, 'worker_id': expense.worker_id, 'date': expense.date, 'cash': expense.cash, 'transaction_state': expense.transaction_state, 'description': expense.description}
+        data_expense = {'id': expense.id, 'worker_id': expense.worker_id, 'date': expense.date, 'cash': expense.cash, 'paid': expense.paid, 'description': expense.description}
         total_expenses_in_excel.append(data_expense)
-        expenses_columns = ['id', 'worker_id', 'date', 'cash', 'transaction_state', 'description']
+        expenses_columns = ['id', 'worker_id', 'date', 'cash', 'paid', 'description']
 
         total_expenses_for_data = pd.DataFrame(total_expenses_in_excel, columns=expenses_columns)
         total_expenses_for_data.to_excel(excel_file, sheet_name='Expenses', index=False, engine='openpyxl')

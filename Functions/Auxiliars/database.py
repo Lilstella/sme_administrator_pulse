@@ -44,18 +44,18 @@ class DatabaseFunctions:
                                 '(id TEXT NOT NULL, name TEXT NOT NULL, surname TEXT NOT NULL, gender TEXT, age INT, mail TEXT, PRIMARY KEY(id, mail))')
                 case '2':
                     cursor.execute('CREATE TABLE IF NOT EXISTS sales'\
-                                '(id TEXT PRIMARY KEY, client_id TEXT, date DATETIME, cash INT, transaction_state TEXT, service_state TEXT, description TEXT, FOREIGN KEY (client_id) REFERENCES clients(id))')
+                                '(id TEXT PRIMARY KEY NOT NULL, client_id TEXT, date DATETIME, cash INT, paid INT, delivered INT, description TEXT, FOREIGN KEY (client_id) REFERENCES clients(id))')
                 case '3':    
                     cursor.execute('CREATE TABLE IF NOT EXISTS workers'\
                                 '(id TEXT NOT NULL, name TEXT NOT NULL, surname TEXT NOT NULL, position TEXT NOT NULL, salary INT NOT NULL, mail TEXT, PRIMARY KEY(id, mail))')
                     
                 case '4':
                     cursor.execute('CREATE TABLE IF NOT EXISTS expenses'\
-                                '(id TEXT PRIMARY KEY NOT NULL, worker_id TEXT, date DATETIME, cash INT, transaction_state TEXT, description TEXT, FOREIGN KEY (worker_id) REFERENCES workers(id))')
+                                '(id TEXT PRIMARY KEY NOT NULL, worker_id TEXT, date DATETIME, cash INT, paid INT, description TEXT, FOREIGN KEY (worker_id) REFERENCES workers(id))')
                 
                 case '5':
                     cursor.execute('CREATE TABLE IF NOT EXISTS tasks'\
-                                   '(id TEXT PRIMARY KEY NOT NULL, worker_id TEXT, title TEXT NOT NULL, content TEXT NOT NULL, done BOOLEAN NOT NULL)')
+                                   '(id TEXT PRIMARY KEY NOT NULL, worker_id TEXT, title TEXT NOT NULL, content TEXT NOT NULL, done INT NOT NULL)')
     @staticmethod        
     def load_from_table(model_table, model_class, db_file):
         with SimpleConnection(db_file) as cursor:

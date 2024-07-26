@@ -52,13 +52,13 @@ class Clients:
         DatabaseFunctions.remove_all_registers('clients', db_file)
 
 class Sale:
-    def __init__(self, id, client_id, date, cash, transaction_state, service_state, description):
+    def __init__(self, id, client_id, date, cash, paid, delivered, description):
         self.id = id
         self.client_id = client_id
         self.date = date
         self.cash = cash
-        self.transaction_state = transaction_state
-        self.service_state = service_state
+        self.paid = paid
+        self.delivered = delivered
         self.description = description
     
 class Sales:
@@ -78,14 +78,14 @@ class Sales:
                 return sale
             
     @staticmethod
-    def add_sale(id, client_id, date, cash, transaction_state, service_state, description, db_file):
-        sale = Sale(id, client_id, date, cash, transaction_state, service_state, description)
-        DatabaseFunctions.insert_register('sales', ['id', 'client_id', 'date', 'cash', 'transaction_state', 'service_state', 'description'], [id, client_id, date, cash, transaction_state, service_state, description], db_file)
+    def add_sale(id, client_id, date, cash, paid, delivered, description, db_file):
+        sale = Sale(id, client_id, date, cash, paid, delivered, description)
+        DatabaseFunctions.insert_register('sales', ['id', 'client_id', 'date', 'cash', 'paid', 'delivered', 'description'], [id, client_id, date, cash, paid, delivered, description], db_file)
         return sale
 
     @staticmethod
-    def modificate_sale(id, cash, transaction_state, service_state, description, db_file):
-        DatabaseFunctions.update_register('sales', ['cash', 'transaction_state', 'service_state', 'description'], [cash, transaction_state, service_state, description, id], db_file)
+    def modificate_sale(id, cash, paid, delivered, description, db_file):
+        DatabaseFunctions.update_register('sales', ['cash', 'paid', 'delivered', 'description'], [cash, paid, delivered, description, id], db_file)
         return Sales.search_sale(id, db_file)
             
     @staticmethod
@@ -97,7 +97,7 @@ class Sales:
     @staticmethod
     def add_many_sales(list_new_sales, db_file):
         for sale in list_new_sales:
-            DatabaseFunctions.insert_register('sales', ['id', 'client_id', 'date', 'cash', 'transaction_state', 'service_state', 'description'], [sale.id, sale.client_id, sale.date, sale.cash, sale.transaction_state, sale.service_state, sale.description], db_file)
+            DatabaseFunctions.insert_register('sales', ['id', 'client_id', 'date', 'cash', 'paid', 'delivered', 'description'], [sale.id, sale.client_id, sale.date, sale.cash, sale.paid, sale.delivered, sale.description], db_file)
 
     @staticmethod
     def remove_all_sales(db_file):
@@ -155,12 +155,12 @@ class Workers:
         DatabaseFunctions.remove_all_registers('workers', db_file)
 
 class Expense:
-    def __init__(self, id, worker_id, date, cash, transaction_state, description):
+    def __init__(self, id, worker_id, date, cash, paid, description):
         self.id = id
         self.worker_id = worker_id
         self.date = date
         self.cash = cash
-        self.transaction_state = transaction_state
+        self.paid = paid
         self.description = description
 
 class Expenses:
@@ -180,14 +180,14 @@ class Expenses:
                 return expense
             
     @staticmethod
-    def add_expense(id, worker_id, date, cash, transaction_state, description, db_file):
-        expense = Expense(id, worker_id, date, cash, transaction_state, description)
-        DatabaseFunctions.insert_register('expenses', ['id', 'worker_id', 'date', 'cash', 'transaction_state', 'description'], [id, worker_id, date, cash, transaction_state, description], db_file)
+    def add_expense(id, worker_id, date, cash, paid, description, db_file):
+        expense = Expense(id, worker_id, date, cash, paid, description)
+        DatabaseFunctions.insert_register('expenses', ['id', 'worker_id', 'date', 'cash', 'paid', 'description'], [id, worker_id, date, cash, paid, description], db_file)
         return expense
     
     @staticmethod
-    def modificate_expense(id, date, cash, transaction_state, description, db_file):
-        DatabaseFunctions.update_register('expenses', ['date', 'cash', 'transaction_state', 'description'], [date, cash, transaction_state, description, id], db_file)
+    def modificate_expense(id, date, cash, paid, description, db_file):
+        DatabaseFunctions.update_register('expenses', ['date', 'cash', 'paid', 'description'], [date, cash, paid, description, id], db_file)
         return Expenses.search_expense(id, db_file)
     
     @staticmethod
@@ -199,7 +199,7 @@ class Expenses:
     @staticmethod
     def add_many_expenses(list_new_expenses, db_file):
         for expense in list_new_expenses:
-            DatabaseFunctions.insert_register('expenses', ['id', 'worker_id', 'date', 'cash', 'transaction_state', 'description'], [expense.id, expense.worker_id, expense.date, expense.cash, expense.transaction_state, expense.description], db_file)
+            DatabaseFunctions.insert_register('expenses', ['id', 'worker_id', 'date', 'cash', 'paid', 'description'], [expense.id, expense.worker_id, expense.date, expense.cash, expense.paid, expense.description], db_file)
 
     @staticmethod
     def remove_all_expenses(db_file):
@@ -231,7 +231,7 @@ class Tasks:
             
     @staticmethod
     def add_task(id, worker_id, title, content, done, db_file):
-        task = Task(id, title, content, done)
+        task = Task(id, worker_id, title, content, done)
         DatabaseFunctions.insert_register('tasks', ['id', 'worker_id', 'title', 'content', 'done'], [id, worker_id, title, content, done], db_file)
         return task
 
