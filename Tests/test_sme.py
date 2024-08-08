@@ -1,11 +1,13 @@
 from copy import copy
 from tempfile import NamedTemporaryFile
 import pandas as pd
+from datetime import datetime
 import os
 import unittest
 from openpyxl import Workbook
-from Functions.models import *
-from Functions.excel import SaveAllInExcel, LoadAllFromTable, SaveOneInExcel
+from Functions.models import Client, Clients, Sale, Sales, Worker, Workers, Expense, Expenses, Tasks
+from Functions.excel import SaveAllInExcel, SaveOneInExcel, LoadAllFromTable
+from Functions.info import InfoClients, InfoSales
 from Functions.Auxiliars.valid_id import valid_id
 
 class TestModels:
@@ -15,9 +17,9 @@ class TestModels:
             self.db_file_name = self.test_db_file.name
             self.test_db_file.close()
             Clients.create_table_client(self.db_file_name)
-            Clients.add_client('ABCDE-1', 'John', 'Doe', 'Male', 30, 'tr@gmail.com', self.db_file_name)
-            Clients.add_client('XYZ00-2', 'Alice', 'Smith', 'Female', 25, 'y@gmail.com', self.db_file_name)
-            Clients.add_client('12345-3', 'Michael', 'Johnson', 'Male', 40, 'urs@gmail.com', self.db_file_name)
+            Clients.add_client('ABCDE-1', 'John', 'Doe', 'M', 30, 'tr@gmail.com', self.db_file_name)
+            Clients.add_client('XYZ00-2', 'Alice', 'Smith', 'F', 25, 'y@gmail.com', self.db_file_name)
+            Clients.add_client('12345-3', 'Michael', 'Johnson', 'M', 40, 'urs@gmail.com', self.db_file_name)
 
         def tearDown(self):
             try:
@@ -33,7 +35,7 @@ class TestModels:
 
         def test_add_client(self):
             previous_list_client = copy(Clients.load_clients(self.db_file_name))
-            new_client = Clients.add_client('PLG00-H', 'Marie', 'Curie', 'Female', 40, 'l@gmail.com', self.db_file_name)
+            new_client = Clients.add_client('PLG00-H', 'Marie', 'Curie', 'F', 40, 'l@gmail.com', self.db_file_name)
             new_list_clients = Clients.load_clients(self.db_file_name)
             new_client_in_db = Clients.search_client('PLG00-H', self.db_file_name)
             diferrence_totals = len(new_list_clients) - len(previous_list_client)
@@ -41,13 +43,13 @@ class TestModels:
             self.assertEqual(new_client.id, 'PLG00-H')
             self.assertEqual(new_client.name, 'Marie')
             self.assertEqual(new_client.surname, 'Curie')
-            self.assertEqual(new_client.gender, 'Female')
+            self.assertEqual(new_client.gender, 'F')
             self.assertEqual(new_client.age, 40)
             self.assertEqual(new_client.name, new_client_in_db.name)
 
         def test_modificate_client(self):
             client_to_modificate = copy(Clients.search_client('XYZ00-2', self.db_file_name))
-            modificated_client = Clients.modificate_client('XYZ00-2', 'Charlotte', 'Smith', 'Female', 25, 'sa@gmail.com', self.db_file_name)
+            modificated_client = Clients.modificate_client('XYZ00-2', 'Charlotte', 'Smith', 'F', 25, 'sa@gmail.com', self.db_file_name)
             new_client = Clients.search_client('XYZ00-2', self.db_file_name)
             self.assertEqual(client_to_modificate.name, 'Alice')
             self.assertEqual(modificated_client.name, 'Charlotte')
@@ -64,8 +66,8 @@ class TestModels:
 
         def test_add_many_clients(self):
             previous_list_clients = copy(Clients.load_clients(self.db_file_name))
-            list_of_new_clients = [Client('DEFGH-4', 'Emily', 'Brown', 'Female', 35, 'cde@gmail.com'),
-                                Client('45678-A', 'James', 'Williams', 'Male', 28, 'efvg@gmail.com')]
+            list_of_new_clients = [Client('DEFGH-4', 'Emily', 'Brown', 'F', 35, 'cde@gmail.com'),
+                                Client('45678-A', 'James', 'Williams', 'M', 28, 'efvg@gmail.com')]
             Clients.add_many_clients(list_of_new_clients, self.db_file_name)
             difference_totals = len(Clients.load_clients(self.db_file_name)) - len(previous_list_clients)
             self.assertEqual(difference_totals, 2)
@@ -83,7 +85,7 @@ class TestModels:
             self.test_db_file.close()
             Sales.create_table_sale(self.db_file_name)
             Clients.create_table_client(self.db_file_name)
-            Clients.add_client('NJ876-9', 'John', 'Doe', 'Male', 30, 'as@gmail.com', self.db_file_name)
+            Clients.add_client('NJ876-9', 'John', 'Doe', 'M', 30, 'as@gmail.com', self.db_file_name)
             Sales.add_sale('00011123K', 'NJ876-9', '2024-05-10 21:30:00', 150, 1, 1, 'X5 Pasta Bolognese Combo', self.db_file_name)
             Sales.add_sale('70770707K', 'NJ876-9', '2024-01-01 12:00:00', 50, 0, 1, 'X1 Large Neapolitan Pizza & X1 Large Jam Pizza', self.db_file_name)
             Sales.add_sale('06440400G', 'NJ876-9', '2024-02-04 12:30:00', 10, 0, 0, 'X1 Caprese Salad', self.db_file_name)
@@ -356,8 +358,8 @@ class TestExcel:
 
             Clients.create_table_client(self.db_file_name)
             clients_data = [
-                Client('M6777-0', 'Mario', 'Castañeda', 'Male', 40, 'mariocasta@gmail.com'),
-                Client('70000-1', 'María', 'Liendra', 'Female', 32, 'liendma@gmail.com')
+                Client('M6777-0', 'Mario', 'Castañeda', 'M', 40, 'mariocasta@gmail.com'),
+                Client('70000-1', 'María', 'Liendra', 'F', 32, 'liendma@gmail.com')
             ]
             Clients.add_many_clients(clients_data, self.db_file_name)
 
@@ -424,7 +426,7 @@ class TestExcel:
                 'id': ['M6777-0', '70000-1'],
                 'name': ['Mario', 'María'],
                 'surname': ['Castañeda', 'Liendra'],
-                'gender': ['Male', 'Female'],
+                'gender': ['M', 'F'],
                 'age': [40, 32],
                 'mail': ['mariocasta@gmail.com', 'liendma@gmail.com']
             }
@@ -529,7 +531,7 @@ class TestExcel:
             wb.remove(wb["Sheet"])  
             wb.save(self.excel_file_name)
 
-            self.test_client = Client('70000-1', 'María', 'Liendra', 'Female', 32, 'liendma@gmail.com')
+            self.test_client = Client('70000-1', 'María', 'Liendra', 'F', 32, 'liendma@gmail.com')
             self.test_sale = Sale('39000000E', None, '2023-12-10 21:45:00', 15, 0, 1, 'X1 Bowl of Nuggets')
             self.test_worker = Worker('00000-1', 'Viviana', 'Marcic', 'Executive', 6000, 'v.marcic@gmail.com')
             self.test_expense = Expense('45000000W', None, '2022-01-23 21:45:00', 50, 1, 'Buy knifes')
@@ -566,6 +568,194 @@ class TestExcel:
             self.assertEqual(len(new_expense_in_excel), 1)
             self.assertEqual(new_expense_in_excel.loc[0, 'paid'], 1)
 
+class TestInfo:
+    class TestInfoClients(unittest.TestCase):
+        def setUp(self):
+            self.test_db_file = NamedTemporaryFile(delete=False)
+            self.db_file_name = self.test_db_file.name
+            self.test_db_file.close()
+            Clients.create_table_client(self.db_file_name)
+            Sales.create_table_sale(self.db_file_name)
+            Clients.add_client('ABCDE-1', 'John', 'Doe', 'M', 30, 'tr@gmail.com', self.db_file_name)
+            Clients.add_client('XYZ00-2', 'Alice', 'Smith', 'F', 25, 'y@gmail.com', self.db_file_name)
+            Clients.add_client('12345-3', 'Michael', 'Johnson', 'M', 40, 'urs@gmail.com', self.db_file_name)
+            Sales.add_sale('00011123K', 'ABCDE-1', '2024-05-10 21:30:00', 150, 1, 1, 'X5 Pasta Bolognese Combo', self.db_file_name)
+            Sales.add_sale('70770707K', '12345-3', '2024-01-01 12:00:00', 50, 0, 1, 'X1 Large Neapolitan Pizza & X1 Large Jam Pizza', self.db_file_name)
+            Sales.add_sale('06440400G', '12345-3', '2024-02-04 12:30:00', 10, 0, 0, 'X1 Caprese Salad', self.db_file_name)
+
+        def tearDown(self):
+            try:
+                os.remove(self.db_file_name)
+            except PermissionError:
+                pass
+
+        def test_gender_of_clients(self):
+            gender_of_clients = InfoClients.gender_of_clients(self.db_file_name)
+            expected = {'Male': 2, 'Female': 1, 'Other': 0}
+
+            self.assertEqual(gender_of_clients, expected)
+
+        def test_age_of_clients(self):
+            age_of_clients = InfoClients.age_of_clients(self.db_file_name)
+            expected = {'15-20': 0, '21-25': 1, '26-30': 1, '31-35': 0, '36-40': 1, '41-45': 0, '46+': 0}
+
+            self.assertEqual(age_of_clients, expected)
+
+        def test_client_sale_history(self):
+            sale_history_1 = InfoClients.client_sale_history(self.db_file_name, 'XYZ00-2')
+            sale_history_2 = InfoClients.client_sale_history(self.db_file_name, '12345-3')
+            expected_1 = []
+
+            self.assertEqual(sale_history_1, expected_1)
+            self.assertEqual(sale_history_2[0].id, '70770707K')
+            self.assertEqual(sale_history_2[1].id, '06440400G')
+
+        def test_client_total_cash(self):
+            cash_for_client_1 = InfoClients.client_total_cash(self.db_file_name, 'ABCDE-1')
+            cash_for_client_2 = InfoClients.client_total_cash(self.db_file_name, 'XYZ00-2')
+            cash_for_client_3 = InfoClients.client_total_cash(self.db_file_name, '12345-3')
+
+            self.assertEqual(cash_for_client_1, 150)
+            self.assertEqual(cash_for_client_2, 0)
+            self.assertEqual(cash_for_client_3, 60)
+
+        def test_client_total_sales(self):
+            sale_for_client_1 = InfoClients.client_total_sales(self.db_file_name, 'ABCDE-1')
+            sale_for_client_2 = InfoClients.client_total_sales(self.db_file_name, 'XYZ00-2')
+            sale_for_client_3 = InfoClients.client_total_sales(self.db_file_name, '12345-3')
+
+            self.assertEqual(sale_for_client_1, 1)
+            self.assertEqual(sale_for_client_2, 0)
+            self.assertEqual(sale_for_client_3, 2)
+
+        def test_debt_of_client(self):
+            debt_of_client_1 = InfoClients.debt_of_the_client(self.db_file_name, 'ABCDE-1')
+            debt_of_client_2 = InfoClients.debt_of_the_client(self.db_file_name, 'XYZ00-2')
+            debt_of_client_3 = InfoClients.debt_of_the_client(self.db_file_name, '12345-3')
+
+            self.assertEqual(debt_of_client_1, 0)
+            self.assertEqual(debt_of_client_2, 0)
+            self.assertEqual(debt_of_client_3, 60)
+
+    class TestInfoSales(unittest.TestCase):
+        def setUp(self):
+            self.test_db_file = NamedTemporaryFile(delete=False)
+            self.db_file_name = self.test_db_file.name
+            self.test_db_file.close()
+            Clients.create_table_client(self.db_file_name)
+            Sales.create_table_sale(self.db_file_name)
+            Clients.add_client('ABCDE-1', 'John', 'Doe', 'M', 30, 'tr@gmail.com', self.db_file_name)
+            Clients.add_client('12345-3', 'Michael', 'Johnson', 'M', 40, 'urs@gmail.com', self.db_file_name)
+            Sales.add_sale('00011123K', 'ABCDE-1', '2024-05-10 21:30:00', 150, 1, 1, 'X5 Pasta Bolognese Combo', self.db_file_name)
+            Sales.add_sale('70770707K', '12345-3', '2024-01-01 12:00:00', 50, 0, 1, 'X1 Large Neapolitan Pizza & X1 Large Jam Pizza', self.db_file_name)
+            Sales.add_sale('06440400G', None, '2024-02-04 12:30:00', 10, 0, 0, 'X1 Caprese Salad', self.db_file_name)
+            Sales.add_sale('05330401H', None, '2024-03-01 14:15:00', 15, 0, 0, 'X2 Margherita Pizza', self.db_file_name)
+            Sales.add_sale('06220402J', None, '2024-03-15 16:45:00', 20, 0, 0, 'X3 Spaghetti Bolognese', self.db_file_name)
+            Sales.add_sale('05110403K', None, '2024-04-25 11:00:00', 8, 0, 0, 'X4 Caesar Salad', self.db_file_name)
+            Sales.add_sale('06000404L', None, '2024-04-25 13:30:00', 12, 0, 0, 'X5 Pepperoni Pizza', self.db_file_name)
+            Sales.add_sale('05990405M', None, '2024-05-05 15:20:00', 18, 0, 0, 'X6 Lasagna', self.db_file_name)
+
+        def tearDown(self):
+            try:
+                os.remove(self.db_file_name)
+            except PermissionError:
+                pass
+
+        def test_total_cash_sales(self):
+            total_cash = InfoSales.total_cash_sales(self.db_file_name)
+
+            self.assertEqual(total_cash, 283)
+
+        def test_total_cash_sale_for_day(self):
+            day_1 = datetime(2023, 3, 20)
+            day_2 = datetime(2024, 2, 4)
+            day_3 = datetime(2024, 4, 25)
+
+            checking_day_1 = InfoSales.total_cash_sale_for_day(self.db_file_name, day_1)
+            checking_day_2 = InfoSales.total_cash_sale_for_day(self.db_file_name, day_2)
+            checking_day_3 = InfoSales.total_cash_sale_for_day(self.db_file_name, day_3)
+
+            self.assertEqual(checking_day_1, 0)
+            self.assertEqual(checking_day_2, 10)
+            self.assertEqual(checking_day_3, 20)
+
+        def test_total_cash_sale_today(self):
+            #08/2024
+            cash_today = InfoSales.total_cash_sale_today(self.db_file_name)
+
+            self.assertEqual(cash_today, 0)
+
+        def test_total_cash_for_month(self):
+            january = datetime(2024, 1, 1)
+            february = datetime(2024, 2, 1)
+            march = datetime(2024, 3, 1)
+            april = datetime(2024, 4, 1)
+            may = datetime(2024, 5, 1)
+
+            check_january = InfoSales.total_cash_sale_for_month(self.db_file_name, january)
+            check_february = InfoSales.total_cash_sale_for_month(self.db_file_name, february)
+            check_march = InfoSales.total_cash_sale_for_month(self.db_file_name, march)
+            check_april = InfoSales.total_cash_sale_for_month(self.db_file_name, april)
+            check_may = InfoSales.total_cash_sale_for_month(self.db_file_name, may)
+
+            self.assertEqual(check_january, 50)
+            self.assertEqual(check_february, 10)
+            self.assertEqual(check_march, 35)
+            self.assertEqual(check_april, 20)
+            self.assertEqual(check_may, 168)
+
+        def test_total_cash_this_month(self):
+            #08/24
+            check_this_month = InfoSales.total_cash_sale_this_month(self.db_file_name)
+
+            self.assertEqual(check_this_month, 0)
+
+        def test_total_cash_for_year(self):
+            year_2023 = datetime(2023, 1, 1)
+            year_2024 = datetime(2024, 1, 1)
+
+            cash_of_2023 = InfoSales.total_cash_sale_for_year(self.db_file_name, year_2023)
+            cash_of_2024 = InfoSales.total_cash_sale_for_year(self.db_file_name, year_2024)
+
+            self.assertEqual(cash_of_2023, 0)
+            self.assertEqual(cash_of_2024, 283)
+
+        def test_total_cash_this_year(self):
+            #2024
+            cash_this_year = InfoSales.total_cash_sale_this_year(self.db_file_name)
+
+            self.assertEqual(cash_this_year, 283)
+
+        def test_transaction_state_of_sales(self):
+            transaction_states_of_sales = InfoSales.transaction_state_of_sales(self.db_file_name)
+            expected = {'paid': 1, 'pending': 7}
+
+            self.assertEqual(transaction_states_of_sales, expected)
+
+        def test_service_state_of_sales(self):
+            service_states_of_sales = InfoSales.service_state_of_sales(self.db_file_name)
+            expected = {'delivered': 2, 'pending': 6}
+
+            self.assertEqual(service_states_of_sales, expected)
+
+        def test_sales_pending_to_pay(self):
+            sales_pending_to_pay = InfoSales.sales_pending_to_pay(self.db_file_name)
+            amount_of_pending = len(sales_pending_to_pay)
+            id_of_pending_sales =  set([sale.id for sale in sales_pending_to_pay])
+            expected_ids = {'70770707K', '06440400G', '05330401H', '06220402J', '05110403K', '06000404L', '05990405M'}
+
+            self.assertEqual(amount_of_pending, 7)
+            self.assertEqual(id_of_pending_sales, expected_ids)
+
+        def test_sales_pending_to_deliver(self):
+            sales_pending_to_deliver = InfoSales.sales_pending_to_deliver(self.db_file_name)
+            amount_of_pending = len(sales_pending_to_deliver)
+            ids_of_pending_sales = set([sale.id for sale in sales_pending_to_deliver])
+            expected_ids = {'06440400G', '05330401H', '06220402J', '05110403K', '06000404L', '05990405M'}
+
+            self.assertEqual(amount_of_pending, 6)
+            self.assertEqual(ids_of_pending_sales, expected_ids)
+
 class TestAuxiliars(unittest.TestCase):
         def setUp(self):
             self.test_db_file = NamedTemporaryFile(delete=False)
@@ -573,7 +763,7 @@ class TestAuxiliars(unittest.TestCase):
             self.test_db_file.close()
 
             Clients.create_table_client(self.db_file_name)
-            Clients.add_client('AB7DE-1', 'John', 'Doe', 'Male', 30, 'tr@gmail.com', self.db_file_name)
+            Clients.add_client('AB7DE-1', 'John', 'Doe', 'M', 30, 'tr@gmail.com', self.db_file_name)
 
             Sales.create_table_sale(self.db_file_name)
             Sales.add_sale('00000876L', None, '2024-06-20 21:15:00', 80, 1, 1, 'X5 Pasta Bolognese Combo', self.db_file_name)
