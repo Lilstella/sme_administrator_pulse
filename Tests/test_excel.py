@@ -24,8 +24,8 @@ class TestSaveAllInExcel(unittest.TestCase):
 
         Sales.create_table_sale(self.db_file_name)
         sales_data = [
-            Sale('10000000J', None, '2023-12-10 12:30:00', 50, 0, 1, 'X20 Hot Dogs'),
-            Sale('39000000K', None, '2023-12-10 21:45:00', 15, 0, 1, 'X1 Bowl of Nuggets')
+            Sale('JJRJJGHJ7', None, '2023-12-10 12:30:00', 50, 0, 1, 'X20 Hot Dogs'),
+            Sale('KLLPKLUK2', None, '2023-12-10 21:45:00', 15, 0, 1, 'X1 Bowl of Nuggets')
         ]
         Sales.add_many_sales(sales_data, self.db_file_name)
 
@@ -38,8 +38,8 @@ class TestSaveAllInExcel(unittest.TestCase):
 
         Expenses.create_table_expense(self.db_file_name)
         expenses_data = [
-            Expense('05050505L', None, '2023-12-20 09:45:00', 1750, 0, 'News salarys'),
-            Expense('45009000K', None, '2022-01-23 21:45:00', 50, 1, 'Buy knifes')
+            Expense('LJJJLGJL7', None, '2023-12-20 09:45:00', 1750, 0, 'News salarys'),
+            Expense('KJKLLHLL6', None, '2022-01-23 21:45:00', 50, 1, 'Buy knifes')
         ]
         Expenses.add_many_expenses(expenses_data, self.db_file_name)
 
@@ -92,7 +92,7 @@ class TestLoadAllFromTable(unittest.TestCase):
         df_clients = pd.DataFrame(clients_data)
         
         sales_data = {
-            'id': ['10000007G', '39000000J'],
+            'id': ['GHGGGTGH6', 'JJTTJJBJ2'],
             'client_id': [None, None],
             'date': ['2023-12-10 12:30:00', '2023-12-10 21:45:00'],
             'cash': [50, 15],
@@ -113,7 +113,7 @@ class TestLoadAllFromTable(unittest.TestCase):
         df_workers = pd.DataFrame(workers_data)
 
         expenses_data = {
-            'id': ['05000000Y', '45000053D'],
+            'id': ['YJYJJTJU9', 'DRDDRGDQ8'],
             'worker_id': [None, None],
             'date': ['2023-12-20 09:45:00', '2022-01-23 21:45:00'],
             'cash': [1750, 50],
@@ -191,9 +191,9 @@ class TestSaveOneInExcel(unittest.TestCase):
         wb.save(self.excel_file_name)
 
         self.test_client = Client('70000-1', 'María', 'Liendra', 'F', 32, 'liendma@gmail.com')
-        self.test_sale = Sale('39000000E', None, '2023-12-10 21:45:00', 15, 0, 1, 'X1 Bowl of Nuggets')
+        self.test_sale = Sale('EDJEREED7', None, '2023-12-10 21:45:00', 15, 0, 1, 'X1 Bowl of Nuggets')
         self.test_worker = Worker('00000-1', 'Viviana', 'Marcic', 'Executive', 6000, 'v.marcic@gmail.com')
-        self.test_expense = Expense('45000000W', None, '2022-01-23 21:45:00', 50, 1, 'Buy knifes')
+        self.test_expense = Expense('WRWWDFWQ9', None, '2022-01-23 21:45:00', 50, 1, 'Buy knifes')
 
     def tearDown(self):
         self.test_excel_file.close()

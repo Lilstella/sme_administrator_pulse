@@ -1,14 +1,14 @@
 import re
 
 person_id_pattern = '[A-Z0-9]{5}-[A-Z0-9]$'
-transfer_id_pattern = '[0-9]{8}[A-Z]$'
+transfer_id_pattern = '[A-Z]{8}[0-9]$'
 
 id_patterns = {
     'client_id_pattern': person_id_pattern,
     'worker_id_pattern': person_id_pattern,
     'sale_id_pattern': transfer_id_pattern,
     'expense_id_pattern': transfer_id_pattern,
-    'task_id_pattern': '[A-Z]{8}[0-9]'
+    'task_id_pattern': '[0-9]{8}[A-Z]'
 }
 
 def valid_id(id, list, pattern_key):

@@ -14,13 +14,13 @@ class TestAuxiliars(unittest.TestCase):
         Clients.add_client('AB7DE-1', 'John', 'Doe', 'M', 30, 'tr@gmail.com', self.db_file_name)
 
         Sales.create_table_sale(self.db_file_name)
-        Sales.add_sale('00000876L', None, '2024-06-20 21:15:00', 80, 1, 1, 'X5 Pasta Bolognese Combo', self.db_file_name)
+        Sales.add_sale('LLYYPPLL7', None, '2024-06-20 21:15:00', 80, 1, 1, 'X5 Pasta Bolognese Combo', self.db_file_name)
 
         Workers.create_table_worker(self.db_file_name)
         Workers.add_worker('OPL67-5', 'Carlos', 'Quintero', 'Cashier', 550, 'plm@gmail.com', self.db_file_name)
 
         Expenses.create_table_expense(self.db_file_name)
-        Expenses.add_expense('98052000B', None, '2008-02-03 20:21:00', 30, 0, 'Recompose a client', self.db_file_name)
+        Expenses.add_expense('BJLJJYLJ9', None, '2008-02-03 20:21:00', 30, 0, 'Recompose a client', self.db_file_name)
 
     def tearDown(self):
         try:
@@ -39,17 +39,17 @@ class TestAuxiliars(unittest.TestCase):
         self.assertFalse(valid_id('04G5s-a', list_clients, 'client_id_pattern'))
         self.assertFalse(valid_id('AB7DE-1', list_clients, 'client_id_pattern'))
 
-        self.assertTrue(valid_id('00000719J', list_sales, 'sale_id_pattern'))
-        self.assertFalse(valid_id('6676U650K', list_sales, 'sale_id_pattern'))
+        self.assertTrue(valid_id('JHJJLJJG9', list_sales, 'sale_id_pattern'))
+        self.assertFalse(valid_id('GGJHGG3G3', list_sales, 'sale_id_pattern'))
         self.assertFalse(valid_id('3180M', list_sales, 'sale_id_pattern'))
-        self.assertFalse(valid_id('00000876L', list_sales, 'sale_id_pattern'))
+        self.assertFalse(valid_id('LLYYPPLL7', list_sales, 'sale_id_pattern'))
 
         self.assertTrue(valid_id('00004-Y', list_workers, 'worker_id_pattern'))
         self.assertFalse(valid_id('870000', list_workers, 'worker_id_pattern'))
         self.assertFalse(valid_id('a0Fj5-0', list_workers, 'worker_id_pattern'))
         self.assertFalse(valid_id('OPL67-5', list_workers, 'worker_id_pattern'))
 
-        self.assertTrue(valid_id('88911000F', list_expenses, 'expense_id_pattern'))
+        self.assertTrue(valid_id('FTYFFRFF7', list_expenses, 'expense_id_pattern'))
         self.assertFalse(valid_id('992YT890L', list_expenses, 'expense_id_pattern'))
         self.assertFalse(valid_id('8600H', list_expenses, 'expense_id_pattern'))
-        self.assertFalse(valid_id('98052000B', list_expenses, 'expense_id_pattern'))
+        self.assertFalse(valid_id('BJLJJYLJ9', list_expenses, 'expense_id_pattern'))

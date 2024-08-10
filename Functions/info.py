@@ -77,7 +77,39 @@ class InfoClients:
                 'debt': debt, 
                 'pending_pay': sales_pending_to_paid, 
                 'pending_deliver': sales_pending_to_deliver}    
-     
+
+    @staticmethod
+    def monthly_client_summary(id, date, db_file):
+        all_sales = Sales.load_sales(db_file)
+        client_history = []
+        client_cash = 0
+        total_client_sales = 0
+        debt = 0
+        sales_pending_to_paid = []
+        sales_pending_to_deliver = []
+        date_year = date.year
+        date_month = date.month
+
+        for sale in all_sales:
+            sale_date = dt.strptime(sale.date, '%Y-%m-%d %H:%M:%S')
+            if sale_date.year == date_year and sale_date.month == date_month:
+                if sale.client_id == id:
+                    client_history.append(sale)
+                    client_cash += sale.cash
+                    total_client_sales += 1
+                    if sale.paid == 0:
+                        sales_pending_to_paid.append(sale)
+                        debt += sale.cash
+                    if sale.delivered == 0:
+                        sales_pending_to_deliver.append(sale)
+
+        return {'history': client_history, 
+                'cash': client_cash, 
+                'amount': total_client_sales, 
+                'debt': debt, 
+                'pending_pay': sales_pending_to_paid, 
+                'pending_deliver': sales_pending_to_deliver}
+
 class InfoSales:
    @staticmethod
    def total_summary(db_file):
