@@ -582,6 +582,11 @@ class TestInfo:
             Sales.add_sale('00011123K', 'ABCDE-1', '2024-05-10 21:30:00', 150, 1, 1, 'X5 Pasta Bolognese Combo', self.db_file_name)
             Sales.add_sale('70770707K', '12345-3', '2024-01-01 12:00:00', 50, 0, 1, 'X1 Large Neapolitan Pizza & X1 Large Jam Pizza', self.db_file_name)
             Sales.add_sale('06440400G', '12345-3', '2024-02-04 12:30:00', 10, 0, 0, 'X1 Caprese Salad', self.db_file_name)
+            Sales.add_sale('10293847H', 'ABCDE-1', '2024-03-15 18:45:00', 200, 1, 1, 'X2 BBQ Chicken Wings Combo', self.db_file_name)
+            Sales.add_sale('99887766L', '12345-3', '2024-03-20 19:15:00', 75, 0, 1, 'X1 Veggie Delight Pizza', self.db_file_name)
+            Sales.add_sale('55667788M', 'ABCDE-1', '2024-04-22 13:50:00', 120, 1, 0, 'X3 Spaghetti Carbonara', self.db_file_name)
+            Sales.add_sale('22334455N', '12345-3', '2024-04-11 20:10:00', 60, 0, 1, 'X1 Margherita Pizza', self.db_file_name)
+            Sales.add_sale('33445566P', 'ABCDE-1', '2024-05-05 14:25:00', 90, 1, 1, 'X2 Caesar Salad & X2 Garlic Bread', self.db_file_name)
 
         def tearDown(self):
             try:
@@ -601,41 +606,50 @@ class TestInfo:
 
             self.assertEqual(age_of_clients, expected)
 
-        def test_client_sale_history(self):
-            sale_history_1 = InfoClients.client_sale_history(self.db_file_name, 'XYZ00-2')
-            sale_history_2 = InfoClients.client_sale_history(self.db_file_name, '12345-3')
-            expected_1 = []
+        def test_client_summary(self):
+            client_summary_1 = InfoClients.client_summary('ABCDE-1', self.db_file_name)
+            client_summary_2 = InfoClients.client_summary('XYZ00-2', self.db_file_name)
+            client_summary_3 = InfoClients.client_summary('12345-3', self.db_file_name)
 
-            self.assertEqual(sale_history_1, expected_1)
-            self.assertEqual(sale_history_2[0].id, '70770707K')
-            self.assertEqual(sale_history_2[1].id, '06440400G')
+            id_of_history_1 = set([sale.id for sale in client_summary_1['history']])
+            expected_history_ids_1 = {'00011123K', '10293847H', '55667788M', '33445566P'}
+            id_of_history_2 = set([sale.id for sale in client_summary_2['history']])
+            expected_history_ids_2 = set()
+            id_of_history_3 = set([sale.id for sale in client_summary_3['history']])
+            expected_history_ids_3 = {'70770707K', '06440400G', '99887766L', '22334455N'}
 
-        def test_client_total_cash(self):
-            cash_for_client_1 = InfoClients.client_total_cash(self.db_file_name, 'ABCDE-1')
-            cash_for_client_2 = InfoClients.client_total_cash(self.db_file_name, 'XYZ00-2')
-            cash_for_client_3 = InfoClients.client_total_cash(self.db_file_name, '12345-3')
+            ids_of_pending_pay_1 = set([sale.id for sale in client_summary_1['pending_pay']])
+            expected_pending_pay_ids_1 = set()
+            ids_of_pending_pay_2 = set([sale.id for sale in client_summary_2['pending_pay']])
+            expected_pending_pay_ids_2 = set()
+            ids_of_pending_pay_3 = set([sale.id for sale in client_summary_3['pending_pay']])
+            expected_pending_pay_ids_3 = {'70770707K', '06440400G', '99887766L', '22334455N'}
 
-            self.assertEqual(cash_for_client_1, 150)
-            self.assertEqual(cash_for_client_2, 0)
-            self.assertEqual(cash_for_client_3, 60)
+            ids_of_pending_deliver_1 = set([sale.id for sale in client_summary_1['pending_deliver']])
+            expected_pending_deliver_ids_1 = {'55667788M'}
+            ids_of_pending_deliver_2 = set([sale.id for sale in client_summary_2['pending_deliver']])
+            expected_pending_deliver_ids_2 = set()
+            ids_of_pending_deliver_3 = set([sale.id for sale in client_summary_3['pending_deliver']])
+            expected_pending_deliver_ids_3 = {'06440400G'}
 
-        def test_client_total_sales(self):
-            sale_for_client_1 = InfoClients.client_total_sales(self.db_file_name, 'ABCDE-1')
-            sale_for_client_2 = InfoClients.client_total_sales(self.db_file_name, 'XYZ00-2')
-            sale_for_client_3 = InfoClients.client_total_sales(self.db_file_name, '12345-3')
-
-            self.assertEqual(sale_for_client_1, 1)
-            self.assertEqual(sale_for_client_2, 0)
-            self.assertEqual(sale_for_client_3, 2)
-
-        def test_debt_of_client(self):
-            debt_of_client_1 = InfoClients.debt_of_the_client(self.db_file_name, 'ABCDE-1')
-            debt_of_client_2 = InfoClients.debt_of_the_client(self.db_file_name, 'XYZ00-2')
-            debt_of_client_3 = InfoClients.debt_of_the_client(self.db_file_name, '12345-3')
-
-            self.assertEqual(debt_of_client_1, 0)
-            self.assertEqual(debt_of_client_2, 0)
-            self.assertEqual(debt_of_client_3, 60)
+            self.assertEqual(id_of_history_1, expected_history_ids_1)
+            self.assertEqual(id_of_history_2, expected_history_ids_2)
+            self.assertEqual(id_of_history_3, expected_history_ids_3)
+            self.assertEqual(client_summary_1['cash'], 560)
+            self.assertEqual(client_summary_2['cash'], 0)
+            self.assertEqual(client_summary_3['cash'], 195)
+            self.assertEqual(client_summary_1['amount'], 4)
+            self.assertEqual(client_summary_2['amount'], 0)
+            self.assertEqual(client_summary_3['amount'], 4)
+            self.assertEqual(client_summary_1['debt'], 0)
+            self.assertEqual(client_summary_2['debt'], 0)
+            self.assertEqual(client_summary_3['debt'], 195)
+            self.assertEqual(ids_of_pending_pay_1, expected_pending_pay_ids_1)
+            self.assertEqual(ids_of_pending_pay_2, expected_pending_pay_ids_2)
+            self.assertEqual(ids_of_pending_pay_3, expected_pending_pay_ids_3)
+            self.assertEqual(ids_of_pending_deliver_1, expected_pending_deliver_ids_1)
+            self.assertEqual(ids_of_pending_deliver_2, expected_pending_deliver_ids_2)
+            self.assertEqual(ids_of_pending_deliver_3, expected_pending_deliver_ids_3)
 
     class TestInfoSales(unittest.TestCase):
         def setUp(self):
@@ -644,16 +658,19 @@ class TestInfo:
             self.test_db_file.close()
             Clients.create_table_client(self.db_file_name)
             Sales.create_table_sale(self.db_file_name)
-            Clients.add_client('ABCDE-1', 'John', 'Doe', 'M', 30, 'tr@gmail.com', self.db_file_name)
-            Clients.add_client('12345-3', 'Michael', 'Johnson', 'M', 40, 'urs@gmail.com', self.db_file_name)
-            Sales.add_sale('00011123K', 'ABCDE-1', '2024-05-10 21:30:00', 150, 1, 1, 'X5 Pasta Bolognese Combo', self.db_file_name)
-            Sales.add_sale('70770707K', '12345-3', '2024-01-01 12:00:00', 50, 0, 1, 'X1 Large Neapolitan Pizza & X1 Large Jam Pizza', self.db_file_name)
+            Sales.add_sale('00011123K', None, '2024-05-10 21:30:00', 150, 1, 1, 'X5 Pasta Bolognese Combo', self.db_file_name)
+            Sales.add_sale('70770707K', None, '2024-01-01 12:00:00', 50, 0, 1, 'X1 Large Neapolitan Pizza & X1 Large Jam Pizza', self.db_file_name)
             Sales.add_sale('06440400G', None, '2024-02-04 12:30:00', 10, 0, 0, 'X1 Caprese Salad', self.db_file_name)
             Sales.add_sale('05330401H', None, '2024-03-01 14:15:00', 15, 0, 0, 'X2 Margherita Pizza', self.db_file_name)
             Sales.add_sale('06220402J', None, '2024-03-15 16:45:00', 20, 0, 0, 'X3 Spaghetti Bolognese', self.db_file_name)
             Sales.add_sale('05110403K', None, '2024-04-25 11:00:00', 8, 0, 0, 'X4 Caesar Salad', self.db_file_name)
             Sales.add_sale('06000404L', None, '2024-04-25 13:30:00', 12, 0, 0, 'X5 Pepperoni Pizza', self.db_file_name)
             Sales.add_sale('05990405M', None, '2024-05-05 15:20:00', 18, 0, 0, 'X6 Lasagna', self.db_file_name)
+            Sales.add_sale('04820315L', None, '2024-05-10 14:30:00', 22, 1, 0, 'X3 Tiramisu', self.db_file_name)
+            Sales.add_sale('03450826H', None, '2024-06-15 18:00:00', 35, 0, 1, 'X4 Chicken Alfredo', self.db_file_name)
+            Sales.add_sale('02010607K', None, '2024-06-20 12:45:00', 50, 1, 1, 'X2 Seafood Risotto', self.db_file_name)
+            Sales.add_sale('07650904N', None, '2024-05-25 19:10:00', 27, 0, 0, 'X2 Cannoli', self.db_file_name)
+            Sales.add_sale('09980712P', None, '2024-07-05 16:40:00', 45, 1, 1, 'X5 Four Cheese Pizza', self.db_file_name)
 
         def tearDown(self):
             try:
@@ -661,100 +678,82 @@ class TestInfo:
             except PermissionError:
                 pass
 
-        def test_total_cash_sales(self):
-            total_cash = InfoSales.total_cash_sales(self.db_file_name)
+        def test_total_summary(self):
+            summary = InfoSales.total_summary(self.db_file_name)
 
-            self.assertEqual(total_cash, 283)
+            ids_of_pending_transactions = set([sale.id for sale in summary['pending_transactions']])
+            ids_of_pending_services = set([sale.id for sale in summary['pending_services']])
+            ids_of_all_sales = set([sale.id for sale in summary['all_sales']])
 
-        def test_total_cash_sale_for_day(self):
-            day_1 = datetime(2023, 3, 20)
-            day_2 = datetime(2024, 2, 4)
-            day_3 = datetime(2024, 4, 25)
+            expected_transaction_states_ids = {'70770707K', '06440400G', '05330401H', '06220402J', '05110403K', '06000404L', '05990405M', '03450826H', '07650904N'}
+            expected_transaction_states = {'paid': 4, 'pending': 9}
+            expected_service_states = {'delivered': 5, 'pending': 8}
+            expected_services_states_ids = {'06440400G', '05330401H', '06220402J', '05110403K', '06000404L', '05990405M', '04820315L', '07650904N'}
+            expected_all_ids = {'00011123K', '70770707K', '06440400G', '05330401H', '06220402J', '05110403K', '06000404L', '05990405M', '03450826H', '07650904N', '04820315L', '02010607K', '09980712P'}
 
-            checking_day_1 = InfoSales.total_cash_sale_for_day(self.db_file_name, day_1)
-            checking_day_2 = InfoSales.total_cash_sale_for_day(self.db_file_name, day_2)
-            checking_day_3 = InfoSales.total_cash_sale_for_day(self.db_file_name, day_3)
+            self.assertEqual(summary['cash'], 462)
+            self.assertEqual(summary['transaction_states'], expected_transaction_states)
+            self.assertEqual(ids_of_pending_transactions, expected_transaction_states_ids)
+            self.assertEqual(summary['service_states'], expected_service_states)
+            self.assertEqual(ids_of_pending_services, expected_services_states_ids)
+            self.assertEqual(ids_of_all_sales, expected_all_ids)
+            self.assertEqual(summary['total_sales'], 13)
 
-            self.assertEqual(checking_day_1, 0)
-            self.assertEqual(checking_day_2, 10)
-            self.assertEqual(checking_day_3, 20)
+        def test_daily_summary(self):
+            day_1 = datetime(2024, 7, 5)
+            summary_1 = InfoSales.dialy_summary(day_1, self.db_file_name)
+            day_2 = datetime(2024, 4, 25)
+            summary_2 = InfoSales.dialy_summary(day_2, self.db_file_name)
+            day_3 = datetime(2023, 2, 1)
+            summary_3 = InfoSales.dialy_summary(day_3, self.db_file_name)
 
-        def test_total_cash_sale_today(self):
-            #08/2024
-            cash_today = InfoSales.total_cash_sale_today(self.db_file_name)
+            ids_pending_transaction_states_1 = set([sale.id for sale in summary_1['pending_transactions']])
+            ids_pending_transaction_states_2 = set([sale.id for sale in summary_2['pending_transactions']])
+            ids_pending_transaction_states_3 = set([sale.id for sale in summary_3['pending_transactions']])
+            ids_pending_service_states_1 = set([sale.id for sale in summary_1['pending_services']])
+            ids_pending_service_states_2 = set([sale.id for sale in summary_2['pending_services']])
+            ids_pending_service_states_3 = set([sale.id for sale in summary_3['pending_services']])
+            ids_of_all_sales_1 = set([sale.id for sale in summary_1['all_sales']])
+            ids_of_all_sales_2 = set([sale.id for sale in summary_2['all_sales']])
+            ids_of_all_sales_3 = set([sale.id for sale in summary_3['all_sales']])
 
-            self.assertEqual(cash_today, 0)
+            expected_transaction_states_1 = {'paid': 1, 'pending': 0}
+            expected_transaction_states_2 = {'paid': 0, 'pending': 2}
+            expected_transaction_states_3 = {'paid': 0, 'pending': 0}
+            expected_pending_transaction_ids_1 = set()
+            expected_pending_transaction_ids_2 = {'05110403K', '06000404L'}
+            expected_pending_transaction_ids_3 = set()
+            expected_service_states_1 = {'delivered': 1, 'pending': 0}
+            expected_service_states_2 = {'delivered': 0, 'pending': 2}
+            expected_service_states_3 = {'delivered': 0, 'pending': 0}
+            expected_pending_services_ids_1 = set()
+            expected_pending_services_ids_2 = {'05110403K', '06000404L'}
+            expected_pending_services_ids_3 = set()
+            expected_all_sales_id_1 = {'09980712P'}
+            expected_all_sales_id_2 = {'05110403K', '06000404L'}
+            expected_all_sales_id_3 = set()
 
-        def test_total_cash_for_month(self):
-            january = datetime(2024, 1, 1)
-            february = datetime(2024, 2, 1)
-            march = datetime(2024, 3, 1)
-            april = datetime(2024, 4, 1)
-            may = datetime(2024, 5, 1)
-
-            check_january = InfoSales.total_cash_sale_for_month(self.db_file_name, january)
-            check_february = InfoSales.total_cash_sale_for_month(self.db_file_name, february)
-            check_march = InfoSales.total_cash_sale_for_month(self.db_file_name, march)
-            check_april = InfoSales.total_cash_sale_for_month(self.db_file_name, april)
-            check_may = InfoSales.total_cash_sale_for_month(self.db_file_name, may)
-
-            self.assertEqual(check_january, 50)
-            self.assertEqual(check_february, 10)
-            self.assertEqual(check_march, 35)
-            self.assertEqual(check_april, 20)
-            self.assertEqual(check_may, 168)
-
-        def test_total_cash_this_month(self):
-            #08/24
-            check_this_month = InfoSales.total_cash_sale_this_month(self.db_file_name)
-
-            self.assertEqual(check_this_month, 0)
-
-        def test_total_cash_for_year(self):
-            year_2023 = datetime(2023, 1, 1)
-            year_2024 = datetime(2024, 1, 1)
-
-            cash_of_2023 = InfoSales.total_cash_sale_for_year(self.db_file_name, year_2023)
-            cash_of_2024 = InfoSales.total_cash_sale_for_year(self.db_file_name, year_2024)
-
-            self.assertEqual(cash_of_2023, 0)
-            self.assertEqual(cash_of_2024, 283)
-
-        def test_total_cash_this_year(self):
-            #2024
-            cash_this_year = InfoSales.total_cash_sale_this_year(self.db_file_name)
-
-            self.assertEqual(cash_this_year, 283)
-
-        def test_transaction_state_of_sales(self):
-            transaction_states_of_sales = InfoSales.transaction_state_of_sales(self.db_file_name)
-            expected = {'paid': 1, 'pending': 7}
-
-            self.assertEqual(transaction_states_of_sales, expected)
-
-        def test_service_state_of_sales(self):
-            service_states_of_sales = InfoSales.service_state_of_sales(self.db_file_name)
-            expected = {'delivered': 2, 'pending': 6}
-
-            self.assertEqual(service_states_of_sales, expected)
-
-        def test_sales_pending_to_pay(self):
-            sales_pending_to_pay = InfoSales.sales_pending_to_pay(self.db_file_name)
-            amount_of_pending = len(sales_pending_to_pay)
-            id_of_pending_sales =  set([sale.id for sale in sales_pending_to_pay])
-            expected_ids = {'70770707K', '06440400G', '05330401H', '06220402J', '05110403K', '06000404L', '05990405M'}
-
-            self.assertEqual(amount_of_pending, 7)
-            self.assertEqual(id_of_pending_sales, expected_ids)
-
-        def test_sales_pending_to_deliver(self):
-            sales_pending_to_deliver = InfoSales.sales_pending_to_deliver(self.db_file_name)
-            amount_of_pending = len(sales_pending_to_deliver)
-            ids_of_pending_sales = set([sale.id for sale in sales_pending_to_deliver])
-            expected_ids = {'06440400G', '05330401H', '06220402J', '05110403K', '06000404L', '05990405M'}
-
-            self.assertEqual(amount_of_pending, 6)
-            self.assertEqual(ids_of_pending_sales, expected_ids)
+            self.assertEqual(summary_1['cash'], 45)
+            self.assertEqual(summary_2['cash'], 20)
+            self.assertEqual(summary_3['cash'], 0)
+            self.assertEqual(summary_1['transaction_states'], expected_transaction_states_1)
+            self.assertEqual(summary_2['transaction_states'], expected_transaction_states_2)
+            self.assertEqual(summary_3['transaction_states'], expected_transaction_states_3)
+            self.assertEqual(ids_pending_transaction_states_1, expected_pending_transaction_ids_1)
+            self.assertEqual(ids_pending_transaction_states_2, expected_pending_transaction_ids_2)
+            self.assertEqual(ids_pending_transaction_states_3, expected_pending_transaction_ids_3)
+            self.assertEqual(summary_1['service_states'], expected_service_states_1)
+            self.assertEqual(summary_2['service_states'], expected_service_states_2)
+            self.assertEqual(summary_3['service_states'], expected_service_states_3)
+            self.assertEqual(ids_pending_service_states_1, expected_pending_services_ids_1)
+            self.assertEqual(ids_pending_service_states_2, expected_pending_services_ids_2)
+            self.assertEqual(ids_pending_service_states_3, expected_pending_services_ids_3)
+            self.assertEqual(ids_of_all_sales_1, expected_all_sales_id_1)
+            self.assertEqual(ids_of_all_sales_2, expected_all_sales_id_2)
+            self.assertEqual(ids_of_all_sales_3, expected_all_sales_id_3)
+            self.assertEqual(summary_1['total_sales'], 1)
+            self.assertEqual(summary_2['total_sales'], 2)
+            self.assertEqual(summary_3['total_sales'], 0)
 
 class TestAuxiliars(unittest.TestCase):
         def setUp(self):
